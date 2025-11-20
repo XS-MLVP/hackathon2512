@@ -52,7 +52,9 @@ UT模块Scala文件地址 (源于：https://github.com/OpenXiangShan/YunSuan)：
 ### 安装依赖
 
 OS环境：建议 ubuntu 24.04 LST （window下建议使用WSL2）
+
 本仓库UCAgent的使用模式为： MCP + [iFlow-CLI](https://platform.iflow.cn/cli/quickstart)
+
 请先通过pip安装好[UCAgent](https://github.com/XS-MLVP/UCAgent)及其依赖
 
 其他依赖：
@@ -75,22 +77,16 @@ iFlow的MCP和Hooks配置（~/.iflow/settings.json）建议如下：
     "unitytest"
   ],
   "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "M=`ucagent --hook-message 'continue|quit'` && (tmux send-keys $M; sleep 1; tmux send-keys Enter)",
-            "timeout": 3
-          }
-        ]
-      }
-    ]
+  "Stop": [{"hooks": [{
+"type": "command",
+"command": "M=`ucagent --hook-message 'continue|quit'` && (tmux send-keys $M; sleep 1; tmux send-keys Enter)",
+"timeout": 3
+    }]}]
   }
 }
 ```
 
-上述Hooks用于让iFlow中断时自动继续执行而不需要人工干预。
+上述Hooks用于让iFlow在Tmux中可以自动继续执行而不需要人工干预。
 
 ### 开始运行
 
@@ -102,15 +98,27 @@ git clone https://github.com/XS-MLVP/hackathon2512.git
 
 cd hackathon2512
 
-# TARGET 参数：用于指定待验证的RTL文件（多个文件用`,`隔开，不要有空格）
-# TIMES 参数：用于指定UCAgent的验证次数（重复验证的次数）
-make run TARGET=bug_file/VectorIdiv_bug_1.v,origin_file/origin_file/VectorFloatAdder_origin.v TIMES=3
+# 编译DUT（可选）
+make build_dut_cache TARGET=bug_file/VectorIdiv_bug_1.v
 
-# 清空结果
+# 自动顺序验证，基于Tmux（需要提前完成iFlow登录认证）
+#   TARGET 参数：用于指定待验证的RTL文件（多个文件用`,`隔开，不要有空格）
+#   TIMES 参数：用于指定UCAgent的验证次数（重复验证的次数）
+#   如果没有发现DUT，会自动编译
+make run TARGET=bug_file/VectorIdiv_bug_1.v TIMES=3
+
+# 单独启动DUT的MCP服务
+make run_seq_mcp TARGET=bug_file/VectorIdiv_bug_1.v
+
+# 清空临时数据
 make clean
+
 ```
 
-请根据您的需要修改`Makefile`。运行完成后，可在output目录查看验证结果
+结果位于`result/<port>/`目录下, port为每次启动时随机选择的MCP端口。
+PORT 可以通过参数指定 eg: `make run PORT=5005`。
+
+请根据您的需要修改`Makefile`。
 
 ### 成果提交
 
