@@ -72,7 +72,7 @@ iFlow的MCP和Hooks配置（~/.iflow/settings.json）建议如下：
   "mcpServers": {
     "unitytest": {
       "httpUrl": "http://127.0.0.1:5000/mcp",
-      "timeout": 5000
+      "timeout": 100000     # 调到100s，很多case运行时间比较长，防止超时
     }
   },
   "allowMCPServers": [
