@@ -34,7 +34,9 @@
 │   ├── VectorFloatAdder_origin.v
 │   ├── VectorFloatFMA_origin.v
 │   └── VectorIdiv_origin.v
-├── output                           # UCAgent结果存放目录
+├── output                           # UCAgent临时结果存放目录
+├── result                           # 最终结果保存目录
+├── dutcache                         # DUT-python包缓存目录，防止DUT重复编译，提升效率
 └── spec                             # spec文档和验证要求文档
     ├── VectorIdiv.md                # 命名规则 {DUTNAME}.md 和 {DUTNAME}_spec.md
     ├── VectorIdiv_spec.md           # 如果有其他文件，请以 {DUTNAME}_<name>.md 的方法进行命名
@@ -79,7 +81,7 @@ iFlow的MCP和Hooks配置（~/.iflow/settings.json）建议如下：
   "hooks": {
   "Stop": [{"hooks": [{
 "type": "command",
-"command": "M=`ucagent --hook-message 'continue|quit'` && (tmux send-keys $M; sleep 1; tmux send-keys Enter)",
+"command": "tmux send-keys `ucagent --hook-message 'continue|quit'`; sleep 1; tmux send-keys Enter",
 "timeout": 3
     }]}]
   }
@@ -99,26 +101,30 @@ git clone https://github.com/XS-MLVP/hackathon2512.git
 cd hackathon2512
 
 # 编译DUT（可选）
-make build_dut_cache TARGET=bug_file/VectorIdiv_bug_1.v
+make build_dut_cache
 
 # 自动顺序验证，基于Tmux（需要提前完成iFlow登录认证）
-#   TARGET 参数：用于指定待验证的RTL文件（多个文件用`,`隔开，不要有空格）
+#   TARGET 参数：用于指定待验证的RTL文件（多文件用`;`隔开，支持通配符）
 #   TIMES 参数：用于指定UCAgent的验证次数（重复验证的次数）
 #   如果没有发现DUT，会自动编译
+make run # 默认TARGET为bug_file/*.v;origin_file/*.v
+make run TARGET=bug_file/*.v
 make run TARGET=bug_file/VectorIdiv_bug_1.v TIMES=3
 
 # 单独启动DUT的MCP服务
-make run_seq_mcp TARGET=bug_file/VectorIdiv_bug_1.v
+make run_seq_mcp TARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
 
 # 清空临时数据
 make clean
 
+# 清空所有
+make clean_all
 ```
 
 结果位于`result/<port>/`目录下, port为每次启动时随机选择的MCP端口。
 PORT 可以通过参数指定 eg: `make run PORT=5005`。
 
-请根据您的需要修改`Makefile`。
+请根据您的需要修改`Makefile`，例如支持 Claude Code 等。
 
 ### 成果提交
 

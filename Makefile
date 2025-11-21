@@ -1,14 +1,13 @@
 TIMES ?= 1
-TARGET ?= bug_file/VectorIdiv_bug_1.v
+TARGET ?= bug_file/*.v;origin_file/*.v
 N ?= 1
 WORKSPACE ?= output
 RESULT ?= result
 DUTDIR ?= dutcache
 
-comma := ,
-space :=
-space += $(space)
-T_LIST := $(subst $(comma),$(space),$(strip $(TARGET)))
+comma := ;
+T_LIST := $(subst $(comma), ,$(strip $(TARGET)))
+$(info >>> TARGET_LIST is [$(T_LIST)])
 
 DUT_NAME := $(firstword $(subst _, ,$(notdir $(DUT_FILE))))
 DUT_BASE := $(basename $(notdir $(DUT_FILE)))
@@ -31,10 +30,12 @@ OLDPORT ?= 5000
 
 clean:
 	@rm -rf $(WORKSPACE)
+	echo "clean $(WORKSPACE)"
 
 clean_all: clean
 	@rm -rf $(RESULT)
 	@rm -rf $(DUTDIR)
+	echo "clean $(RESULT) $(DUTDIR)"
 
 init:
 	@mkdir -p $(WORKSPACE)/$(PORT)
@@ -49,13 +50,17 @@ build_one_dut:
 	fi
 
 build_dut_cache:
-	@for m in $(T_LIST); do \
-	  $(MAKE) build_one_dut DUT_FILE=$$m DUTDIR=$(DUTDIR) PORT=$(PORT); \
+	@for p in $(T_LIST); do \
+		for m in `find $$p`; do \
+			$(MAKE) build_one_dut DUT_FILE=$$m DUTDIR=$(DUTDIR) PORT=$(PORT); \
+		done; \
 	done
 
 run_list_mcp:
-	@for m in $(T_LIST); do \
-	  $(MAKE) run_one_mcp DUT_FILE=$$m N=$$N PORT=$(PORT); \
+	@for p in $(T_LIST); do \
+		for m in `find $$p`; do \
+			$(MAKE) run_one_mcp DUT_FILE=$$m N=$$N PORT=$(PORT); \
+		done; \
 	done
 
 run_seq_mcp:
@@ -80,15 +85,15 @@ run_one_mcp: init
 		sleep 5; \
 	done
 
-run_seq_iflow:
+run_seq_cagent:
 	@while true; do \
 	  if [ -e "$(WORKSPACE)/$(PORT)/all_complete.txt" ]; then \
 	    exit 0; \
 	  fi; \
-	  $(MAKE) run_one_iflow PORT=$(PORT); \
+	  $(MAKE) run_one_cagent PORT=$(PORT); \
 	done
 
-run_one_iflow:
+run_one_cagent:
 	@while [ ! -e "$(WORKSPACE)/$(PORT)/Guide_Doc/dut_fixture.md" ] || \
 	       [ -e "$(WORKSPACE)/$(PORT)/dut_complete.txt" ]; do \
 	  sleep 5; \
@@ -96,6 +101,8 @@ run_one_iflow:
 	    exit 0; \
 	  fi; \
 	done
+	# Run iFlow CLI
+	#  You can modify the corresponding startup code according to different Code Agent
 	mkdir -p $(WORKSPACE)/$(PORT)/.iflow
 	cp ~/.iflow/settings.json $(WORKSPACE)/$(PORT)/.iflow/settings.json
 	sed -i "s/$(OLDPORT)\/mcp/$(PORT)\/mcp/" $(WORKSPACE)/$(PORT)/.iflow/settings.json
@@ -104,12 +111,12 @@ run_one_iflow:
 	@echo "`date`: DUT iflow execution completed." >> $(RESULT)/$(PORT)/run_log.txt
 
 run:
-	tmux kill-session -t hk_batch_iflow_session_$(PORT) || true
-	tmux new-session -d -s hk_batch_iflow_session_$(PORT)
-	tmux send-keys -t hk_batch_iflow_session_$(PORT):0.0 \
+	tmux kill-session -t hk_batch_cagent_session_$(PORT) || true
+	tmux new-session -d -s hk_batch_cagent_session_$(PORT)
+	tmux send-keys -t hk_batch_cagent_session_$(PORT):0.0 \
 	   "make run_seq_mcp PORT=$(PORT) OLDPORT=$(OLDPORT) WORKSPACE=$(WORKSPACE) RESULT=$(RESULT) \
 	   TIMES=$(TIMES) TARGET=$(TARGET)" C-m
-	tmux split-window -h -t hk_batch_iflow_session_$(PORT):0.0
-	tmux send-keys -t hk_batch_iflow_session_$(PORT):0.1 \
-	   "make run_seq_iflow PORT=$(PORT) OLDPORT=$(OLDPORT) WORKSPACE=$(WORKSPACE) RESULT=$(RESULT)" C-m
-	tmux attach-session -t hk_batch_iflow_session_$(PORT)
+	tmux split-window -h -t hk_batch_cagent_session_$(PORT):0.0
+	tmux send-keys -t hk_batch_cagent_session_$(PORT):0.1 \
+	   "make run_seq_cagent PORT=$(PORT) OLDPORT=$(OLDPORT) WORKSPACE=$(WORKSPACE) RESULT=$(RESULT)" C-m
+	tmux attach-session -t hk_batch_cagent_session_$(PORT)
