@@ -114,6 +114,9 @@ make run TARGET=bug_file/VectorIdiv_bug_1.v TIMES=3
 # 单独启动DUT的MCP服务
 make run_seq_mcp TARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
 
+# 继续上次UCAgent， 不加 CONTINUE=1 会清空工作目录重新运行
+make run_seq_mcp TARGET=bug_file/VectorIdiv_bug_1.v PORT=5000 CONTINUE=1
+
 # 清空临时数据
 make clean
 

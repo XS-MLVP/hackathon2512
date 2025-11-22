@@ -26,6 +26,7 @@ endef
 PORT ?= $(shell $(call RANDOM_PORT))
 PORT := $(PORT)
 OLDPORT ?= 5000
+CONTINUE ?= false
 ##########################################################################
 
 clean:
@@ -41,7 +42,10 @@ init:
 	@mkdir -p $(WORKSPACE)/$(PORT)
 	@mkdir -p $(RESULT)/$(PORT)
 	@mkdir -p $(DUTDIR)
-	@rm -rf $(WORKSPACE)/$(PORT)/*
+	@if [ "$(CONTINUE)" = "false" ]; then \
+		echo ">>> remove $(WORKSPACE)/$(PORT)/*" \
+		rm -rf $(WORKSPACE)/$(PORT)/*; \
+	fi
 
 build_one_dut:
 	@if [ ! -d "$(DUTDIR)/$(DUT_BASE)/$(DUT_NAME)" ]; then \
