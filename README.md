@@ -104,18 +104,19 @@ cd hackathon2512
 make build_dut_cache
 
 # 自动顺序验证，基于Tmux（需要提前完成iFlow登录认证）
-#   TARGET 参数：用于指定待验证的RTL文件（多文件用`;`隔开，支持通配符）
+#   VTARGET 参数：用于指定待验证的RTL文件（多文件用`;`隔开，支持通配符）
 #   TIMES 参数：用于指定UCAgent的验证次数（重复验证的次数）
+#   UCARGS 参数：传递自定义参数到UCAgent
 #   如果没有发现DUT，会自动编译
-make run # 默认TARGET为bug_file/*.v;origin_file/*.v
-make run TARGET=bug_file/*.v
-make run TARGET=bug_file/VectorIdiv_bug_1.v TIMES=3
+make run # 默认VTARGET为bug_file/*.v;origin_file/*.v
+make run VTARGET=bug_file/*.v
+make run VTARGET=bug_file/VectorIdiv_bug_1.v TIMES=3
 
 # 单独启动DUT的MCP服务
-make run_seq_mcp TARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
+make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
 
 # 继续上次UCAgent， 不加 CONTINUE=1 会清空工作目录重新运行
-make run_seq_mcp TARGET=bug_file/VectorIdiv_bug_1.v PORT=5000 CONTINUE=1
+make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000 CONTINUE=1
 
 # 清空临时数据
 make clean

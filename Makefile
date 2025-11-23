@@ -1,13 +1,13 @@
 TIMES ?= 1
-TARGET ?= bug_file/*.v;origin_file/*.v
+VTARGET ?= bug_file/*.v;origin_file/*.v
 N ?= 1
 WORKSPACE ?= output
 RESULT ?= result
 DUTDIR ?= dutcache
 
 comma := ;
-T_LIST := $(subst $(comma), ,$(strip $(TARGET)))
-$(info >>> TARGET_LIST is [$(T_LIST)])
+T_LIST := $(subst $(comma), ,$(strip $(VTARGET)))
+$(info >>> VTARGET_LIST is [$(T_LIST)])
 
 DUT_NAME := $(firstword $(subst _, ,$(notdir $(DUT_FILE))))
 DUT_BASE := $(basename $(notdir $(DUT_FILE)))
@@ -70,7 +70,7 @@ run_list_mcp:
 run_seq_mcp:
 	@i=1; \
 	while [ $$i -le $(TIMES) ]; do \
-	  $(MAKE) run_list_mcp N=$$i TARGET=$(TARGET) PORT=$(PORT); \
+	  $(MAKE) run_list_mcp N=$$i VTARGET=$(VTARGET) PORT=$(PORT); \
 	  i=$$((i+1)); \
 	done
 	@echo "`date`: All runs completed." >> $(RESULT)/$(PORT)/run_log.txt
@@ -82,7 +82,7 @@ run_one_mcp: init
 	@cp -r $(DUTDIR)/$(DUT_BASE)/$(DUT_NAME) $(WORKSPACE)/$(PORT)/
 	@cp spec/$(DUT_NAME)*.md $(WORKSPACE)/$(PORT)/$(DUT_NAME)/
 	@ucagent $(WORKSPACE)/$(PORT)/ $(DUT_NAME) -s -hm \
-	  --tui --mcp-server-no-file-tools --no-embed-tools --mcp-server-port $(PORT)
+	  --tui --mcp-server-no-file-tools --no-embed-tools --mcp-server-port -eoc $(PORT) $(UCARGS)
 	@cp -r $(WORKSPACE)/$(PORT) $(RESULT)/$(PORT)/RUN_$(N)_$(DUT_BASE)
 	@echo "Waiting for DUT completion signal..."
 	@while [ ! -f "$(WORKSPACE)/$(PORT)/dut_complete.txt" ]; do \
@@ -119,7 +119,7 @@ run:
 	tmux new-session -d -s hk_batch_cagent_session_$(PORT)
 	tmux send-keys -t hk_batch_cagent_session_$(PORT):0.0 \
 	   "make run_seq_mcp PORT=$(PORT) OLDPORT=$(OLDPORT) WORKSPACE=$(WORKSPACE) RESULT=$(RESULT) \
-	   TIMES=$(TIMES) TARGET=$(TARGET)" C-m
+	   TIMES=$(TIMES) VTARGET=$(VTARGET)" C-m
 	tmux split-window -h -t hk_batch_cagent_session_$(PORT):0.0
 	tmux send-keys -t hk_batch_cagent_session_$(PORT):0.1 \
 	   "make run_seq_cagent PORT=$(PORT) OLDPORT=$(OLDPORT) WORKSPACE=$(WORKSPACE) RESULT=$(RESULT)" C-m
