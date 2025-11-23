@@ -48,8 +48,10 @@ UT模块Scala文件地址 (源于：https://github.com/OpenXiangShan/YunSuan)：
 - VectorFloatFMA：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatFMA.scala)
 - VectorIdiv：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatFMA.scala)
 
-其他参考文档：
+其他参考文档(请从官方spec中摘取DUT相关内容作为UCAgent的输入)：
+
 - RISC-V官方V扩展Spec：[点击打开](https://github.com/riscvarchive/riscv-v-spec/blob/master/v-spec.adoc)
+- RISC-V官方ISA-Spec：[点击打开]https://docs.riscv.org/reference/isa/
 
 ### 安装依赖
 
@@ -111,6 +113,9 @@ make build_dut_cache
 make run # 默认VTARGET为bug_file/*.v;origin_file/*.v
 make run VTARGET=bug_file/*.v
 make run VTARGET=bug_file/VectorIdiv_bug_1.v TIMES=3
+
+# 修改UCAgent默认参数
+TEMPLATE_MUST_FAIL=false make run TARGET=origin_file/VectorIdiv_origin.v
 
 # 单独启动DUT的MCP服务
 make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
@@ -198,3 +203,4 @@ Bug提交账号、langfuse的key等，会在活动正式开始时私信发送，
 - 既然例子中提供了Batch执行模式，我可以让LLM晚上连续工作，我白天分析其结果。
 - LLM存在随机性，每次跑出的结果都不一样，因此可以多跑，充分发挥“随机性”在验证工作中的作用。
 - 为何用iFLow作为例子呢？因为它API免费，国内开源大模型几乎都有：GLM 4.6, Qwen3-coder, MinMax M2，Kimi-k2 thinking 等。
+- 使用更强的模型，对于一些商业模型，训练数据中就包含了 RSIC-V 的 Specification，不给完整spec也能发现bug。
