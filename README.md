@@ -115,7 +115,7 @@ make run VTARGET=bug_file/*.v
 make run VTARGET=bug_file/VectorIdiv_bug_1.v TIMES=3
 
 # 修改UCAgent默认参数
-TEMPLATE_MUST_FAIL=false make run TARGET=origin_file/VectorIdiv_origin.v
+TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/VectorIdiv_origin.v
 
 # 单独启动DUT的MCP服务
 make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
