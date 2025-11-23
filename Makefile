@@ -82,7 +82,7 @@ run_one_mcp: init
 	@cp -r $(DUTDIR)/$(DUT_BASE)/$(DUT_NAME) $(WORKSPACE)/$(PORT)/
 	@cp spec/$(DUT_NAME)*.md $(WORKSPACE)/$(PORT)/$(DUT_NAME)/
 	@ucagent $(WORKSPACE)/$(PORT)/ $(DUT_NAME) -s -hm \
-	  --tui --mcp-server-no-file-tools --no-embed-tools --mcp-server-port -eoc $(PORT) $(UCARGS)
+	  --tui --mcp-server-no-file-tools --no-embed-tools -eoc --mcp-server-port $(PORT) $(UCARGS)
 	@cp -r $(WORKSPACE)/$(PORT) $(RESULT)/$(PORT)/RUN_$(N)_$(DUT_BASE)
 	@echo "Waiting for DUT completion signal..."
 	@while [ ! -f "$(WORKSPACE)/$(PORT)/dut_complete.txt" ]; do \
