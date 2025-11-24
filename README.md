@@ -137,28 +137,23 @@ PORT 可以通过参数指定 eg: `make run PORT=5005`。
 
 ### 成果提交
 
+**注意：所有题目都有提交次数限制，一个组同一个题不能提交超过 5 次**
+
 #### 找Bug赛道
 
-- **有提交次数限制，每天不能超过 10 次**
 - 提交内容（每个Bug都需要的材料）：
-  - Bug分析描述：Bug表现描述+可能的原因分析（需要精简）
-  - 测试用例：复现Bug的Fail测试用例（需要能运行，可打包整个UCAgent给出的结果，给出case对应文件和名称）
-  - Spec分析：Bug对应Spec的片段分析（与Spec如何不符，需要给出Spec来源连接）
-- 多个Bug同时提交时，请按目录进行区分
+  - Bug描述`0_bug_description.md`：Bug表现描述+可能的原因分析（需要精简）
+  - Spec分析`1_bug_spec_analysis.md`：Bug对应Spec的片段分析（与Spec如何不符，需要给出Spec来源连接）
+  - 测试用例`2_test_cases`：复现Bug的Fail测试用例（需要能运行，可打包整个UCAgent给出的结果，在bug分析中给出case对应文件和用例名称）
 
 成果提交内容示例：
 ```bash
-bug25112001.zip/       # 压缩包以： 时间 + 第几次提交命名，例如25年11月20日第01次提交
-├── bug1_overflow  # 第一个bug
-│   ├── bug_description.md       # bug分析描述
-│   ├── bug_spec_analysis.md     # spec分析
-│   └── test_cases/              # 可执行的Fail测试用例
-└── bug2_carray    # 第二个bug
-│   ├── bug_description.md
-│   ├── bug_spec_analysis.md
-│   └── test_cases/
-└── ...
-
+# 压缩包以： 时间 + 第几次提交命名 + bug简写，例如25年11月20日第01次提交, bug可能是overflow相关
+bug25112001_overflow.zip
+├── 0_bug_description.md     # bug分析描述，每个文件需要标上序号
+├── 1_bug_spec_analysis.md   # spec分析
+└── 2_test_cases/            # 可执行的Fail测试用例
+└── ...                      # 其他支持文件
 ```
 
 #### 效率赛道
@@ -167,10 +162,10 @@ bug25112001.zip/       # 压缩包以： 时间 + 第几次提交命名，例如
 
 #### 额外奖励
 
-提交要求同“找Bug赛道”。
+提交要求同“找Bug赛道” （无提交次数限制）。
 
 #### 提交地址
-- Bug提交地址：http://82.157.193.13:10101 （暂未开通）
+- 成果提交地址：http://82.157.193.13:10101 （暂未开通）
 
 
 **API 模式接入Token监控**
@@ -320,4 +315,5 @@ test_VectorIdiv_boundary_handling.py:21: AssertionError
 - 为何用iFLow作为例子呢？因为它API免费，国内开源大模型几乎都有：GLM 4.6, Qwen3-coder, MinMax M2，Kimi-k2 thinking 等。
 - 使用更强的模型，对于一些商业模型，训练数据中就包含了 RSIC-V 的 Specification，不给完整spec也能发现bug。
 - DUT的功能明确，接口简单，如果此时Verilog文件太长或者复杂(例如混淆)，则可清空对应RTL内容避免给LLM上下文带来负担。
+- 听说学生党可以申请 Copilot 教育计划，白嫖 Claude 4.5, GPT-5.1-Codex 等前沿模型（王炸组合：UCAgent-MCP + Copilot CLI + Claude 4.5）
 
