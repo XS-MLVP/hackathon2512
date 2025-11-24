@@ -175,7 +175,7 @@ bug25112001.zip/       # 压缩包以： 时间 + 第几次提交命名，例如
 
 **API 模式接入Token监控**
 
-- Langfuse监控地址：http://82.157.193.13:10102（暂未开通，用于效率赛道记录 UCAgent 的 Token 使用情况）
+- Langfuse监控地址：http://82.157.193.13:10102 （暂未开通，用于效率赛道记录 UCAgent 的 Token 使用情况）
 - 在UCAgent的yaml配置中填写(例如：~/.ucagent/setting.yaml)：
 ```
 langfuse:
