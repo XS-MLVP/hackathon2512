@@ -102,7 +102,7 @@ git clone https://github.com/XS-MLVP/hackathon2512.git
 
 cd hackathon2512
 
-# 编译DUT（可选）
+# 编译DUT (Design Under Test) 改步骤可选
 make build_dut_cache
 
 # 自动顺序验证，基于Tmux（需要提前完成iFlow登录认证）
@@ -187,7 +187,7 @@ Bug提交账号、langfuse的key等，会在活动正式开始时私信发送，
 
 #### 案例（一）
 
-思路：由于已经提供了功能全部正常的Origin版本RTL，因此可以基于Origin版本收集测试用例，然后在有Bug版本的RTL进行回归测试。
+思路：由于已经提供了功能全部正常的Origin版本RTL，因此可以基于Origin版本收集测试用例，然后基于有Bug版本的RTL进行回归测试。
 
 ##### 关键步骤：
 
@@ -196,6 +196,7 @@ Bug提交账号、langfuse的key等，会在活动正式开始时私信发送，
 ```bash
 # 提前编译所有 DUT
 make build_dut_cache
+
 # 清空RTL文件内容，进行'黑盒验证'
 echo "" > dutcache/VectorIdiv_origin/VectorIdiv/VectorIdiv.v
 ```
@@ -209,6 +210,8 @@ npx -y @iflow-ai/iflow-cli@latest
 # 关闭测试用例模板强制Fail检查来进行UT验证
 TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/VectorIdiv_origin.v
 ```
+
+上述UCAgent全自动验证过程持续约3个小时左右。
 
 ###### （3）检验测试用例
 
