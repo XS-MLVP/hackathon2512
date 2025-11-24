@@ -188,6 +188,121 @@ langfuse:
 
 Bug提交账号、langfuse的key等，会在活动正式开始时私信发送，如有任何疑问请联系群主。
 
+### 抛砖引玉
+
+#### 案例（一）
+
+思路：由于已经提供了功能全部正常的Origin版本RTL，因此可以基于Origin版本收集测试用例，然后在有Bug版本的RTL进行回归测试。
+
+##### 关键步骤：
+
+###### （1）构建 DUT
+
+```bash
+# 提前编译所有 DUT
+make build_dut_cache
+# 清空RTL文件内容，进行'黑盒验证'
+echo "" > dutcache/VectorIdiv_origin/VectorIdiv/VectorIdiv.v
+```
+
+###### （2）收集正常DUT的测试用例
+
+```bash
+# 提前完成iFlow认证，选好模型 GLM 4.6
+npx -y @iflow-ai/iflow-cli@latest
+
+# 关闭测试用例模板强制Fail检查来进行UT验证
+TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/VectorIdiv_origin.v
+```
+
+###### （3）检验测试用例
+
+```bash
+# 进入用例目录
+cd output/62665/unity_test/tests
+
+# 运行测试
+pytest
+
+# 得到类似输出
+...
+collected 139 items
+test_VectorIdiv_boundary_handling.py ..................
+test_VectorIdiv_configuration_control.py ..........
+test_VectorIdiv_pipeline_control.py ..................
+test_VectorIdiv_stage19_complete.py ......................
+test_stage21_verification.py ......
+===== 139 passed, 2 warnings in 132.64s (0:02:12)
+```
+
+###### （4）替换DUT，进行回归测试
+
+```bash
+
+cd output/62665/
+
+# 删除Origin版本的DUT
+rm -rf VectorIdiv
+
+# 链接有Bug版本的DUT到该目录
+ln -s ../../dutcache/VectorIdiv_bug_1/VectorIdiv .
+
+# 再次运行测试
+cd unity_test/tests
+pytest
+
+# 获得类似以下输出
+...
+collected 139 items
+
+test_VectorIdiv_boundary_handling.py FF................
+test_VectorIdiv_configuration_control.py ..........
+test_VectorIdiv_pipeline_control.py ..................
+test_VectorIdiv_stage19_complete.py ....................FF...
+test_stage21_verification.py ....F.
+=== FAILURES ...
+```
+
+###### （5）Bug分析
+
+发现替换DUT后有5个Fail，其中一个如下：
+
+```bash
+
+...
+env = <VectorIdiv_api.VectorIdivEnv object at 0x73a61c23cfd0>
+
+    def test_divide_by_zero_detection(env):
+        """测试除零检测功能"""
+        # TODO: 测试能够正确检测除数为零的情况
+        env.dut.fc_cover['FG-BOUNDARY-HANDLING'].mark_function(
+          'FC-DIVIDE-BY-ZERO', test_divide_by_zero_detection,
+          ['CK-ZERO-DETECTION'])
+
+        # 测试除零检测：使用32位精度，被除数100，除数0
+        try:
+            result = api_VectorIdiv_divide(env,
+                        dividend=100,
+                        divisor=0,
+                        sew=2,
+                        sign=0, timeout=200)
+            # 如果没有抛出异常，检查d_zero标志位
+            status = api_VectorIdiv_get_status(env)
+            assert status['flags']['d_zero'] != 0, "除零时d_zero标志位应该被置位"
+            print(f"除零检测成功，d_zero标志位: {status['flags']['d_zero']}")
+        except TimeoutError:
+            # 超时也是可以接受的，因为硬件可能在处理除零
+            status = api_VectorIdiv_get_status(env)
+>           assert status['flags']['d_zero'] != 0, "除零时d_zero标志位应该被置位"
+E           AssertionError: 除零时d_zero标志位应该被置位
+E           assert 0 != 0
+
+test_VectorIdiv_boundary_handling.py:21: AssertionError
+```
+
+上述测试用例中的Assert明确说明了d_zero在除0时没有正确赋值，与spec不符可确定为Bug。
+
+
 ### 其他
 
 - 可以使用任何 LLM，开源或者商业
@@ -204,3 +319,5 @@ Bug提交账号、langfuse的key等，会在活动正式开始时私信发送，
 - LLM存在随机性，每次跑出的结果都不一样，因此可以多跑，充分发挥“随机性”在验证工作中的作用。
 - 为何用iFLow作为例子呢？因为它API免费，国内开源大模型几乎都有：GLM 4.6, Qwen3-coder, MinMax M2，Kimi-k2 thinking 等。
 - 使用更强的模型，对于一些商业模型，训练数据中就包含了 RSIC-V 的 Specification，不给完整spec也能发现bug。
+- DUT的功能明确，接口简单，如果此时Verilog文件太长或者复杂(例如混淆)，则可清空对应RTL内容避免给LLM上下文带来负担。
+
