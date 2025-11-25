@@ -33,10 +33,15 @@ clean:
 	@rm -rf $(WORKSPACE)
 	echo "clean $(WORKSPACE)"
 
-clean_all: clean
+clean_result:
 	@rm -rf $(RESULT)
+	echo "clean $(RESULT)"
+
+clean_dut_cache:
 	@rm -rf $(DUTDIR)
 	echo "clean $(RESULT) $(DUTDIR)"
+
+clean_all: clean clean_result clean_dut_cache
 
 init:
 	@mkdir -p $(WORKSPACE)/$(PORT)
