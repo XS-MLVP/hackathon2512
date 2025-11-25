@@ -51,7 +51,7 @@ UT模块Scala文件地址 (源于：https://github.com/OpenXiangShan/YunSuan)：
 其他参考文档(请从官方spec中摘取DUT相关内容作为UCAgent的输入)：
 
 - RISC-V官方V扩展Spec：[点击打开](https://github.com/riscvarchive/riscv-v-spec/blob/master/v-spec.adoc)
-- RISC-V官方ISA-Spec：[点击打开]https://docs.riscv.org/reference/isa/
+- RISC-V官方ISA-Spec：[点击打开](https://docs.riscv.org/reference/isa/)
 
 ### 安装依赖
 
@@ -102,7 +102,7 @@ git clone https://github.com/XS-MLVP/hackathon2512.git
 
 cd hackathon2512
 
-# 编译DUT (Design Under Test) 改步骤可选
+# 编译DUT (Design Under Test) 该步骤可选
 make build_dut_cache
 
 # 自动顺序验证，基于Tmux（需要提前完成iFlow登录认证）
@@ -116,6 +116,7 @@ make run VTARGET=bug_file/VectorIdiv_bug_1.v TIMES=3
 
 # 修改UCAgent默认参数
 TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/VectorIdiv_origin.v
+TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/*.v
 
 # 单独启动DUT的MCP服务
 make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
