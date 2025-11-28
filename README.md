@@ -46,7 +46,7 @@
 UT模块Scala文件地址 (源于：https://github.com/OpenXiangShan/YunSuan)：
 - VectorFloatAdder：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatAdder.scala)
 - VectorFloatFMA：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatFMA.scala)
-- VectorIdiv：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatFMA.scala)
+- VectorIdiv：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorIdiv/VectorIdiv.scala)
 
 其他参考文档(请从官方spec中摘取DUT相关内容作为UCAgent的输入)：
 
@@ -320,4 +320,5 @@ test_VectorIdiv_boundary_handling.py:21: AssertionError
 - 使用更强的模型，对于一些商业模型，训练数据中就包含了 RSIC-V 的 Specification，不给完整spec也能发现bug。
 - DUT的功能明确，接口简单，如果此时Verilog文件太长或者复杂(例如混淆)，则可清空对应RTL内容避免给LLM上下文带来负担。
 - 听说学生党可以申请 Copilot 教育计划，白嫖 Claude 4.5, GPT-5.1-Codex 等前沿模型（王炸组合：UCAgent-MCP + Copilot CLI + Claude 4.5）
+- 有些bug和设计实现，以及具体使用操作相关，在Spec中不一定有描述
 
