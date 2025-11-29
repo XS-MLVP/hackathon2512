@@ -85,14 +85,19 @@ run_seq_mcp:
 run_one_mcp: init
 	@echo "`date`: " $(N) $(DUT_FILE) ">>>>>" $(DUT_NAME) ">>>>" $(DUT_BASE) ">>>>" $(PORT) >> $(RESULT)/$(PORT)/run_log.txt
 	$(MAKE) build_one_dut DUT_FILE=$(DUT_FILE) DUT_NAME=$(DUT_NAME) DUT_BASE=$(DUT_BASE) DUTDIR=$(DUTDIR) PORT=$(PORT)
-	@cp -r $(DUTDIR)/$(DUT_BASE)/$(DUT_NAME) $(WORKSPACE)/$(PORT)/
+	@if [ ! -d "$(WORKSPACE)/$(PORT)/$(DUT_NAME)" ]; then \
+	    cp -r $(DUTDIR)/$(DUT_BASE)/$(DUT_NAME) $(WORKSPACE)/$(PORT)/; \
+	    echo "Copy dut $(DUT_NAME) complete"; \
+	fi
 	@cp spec/$(DUT_NAME)*.md $(WORKSPACE)/$(PORT)/$(DUT_NAME)/
 	@ucagent $(WORKSPACE)/$(PORT)/ $(DUT_NAME) -s -hm \
 	  --tui --mcp-server-no-file-tools --no-embed-tools -eoc --mcp-server-port $(PORT) $(UCARGS)
 	# Only save the result when ucagent is normal exit
-	@if [[ "`cd $(WORKSPACE)/$(PORT)/ && ucagent --hook-message 'continue|quit'`" == "/quit" ]]; then \
-		cp -r $(WORKSPACE)/$(PORT) $(RESULT)/$(PORT)/RUN_$(N)_$(DUT_BASE) \
-	fi
+	@bash -lc 'IS_CMP=$$(cd "$(WORKSPACE)/$(PORT)/" && ucagent --hook-message "continue|quit"); \
+	if [[ "$$IS_CMP" = "/quit" ]]; then \
+	    cp -r $(WORKSPACE)/$(PORT) $(RESULT)/$(PORT)/RUN_$(N)_$(DUT_BASE); \
+	    echo "Copy result $(N)_$(DUT_BASE) complete"; \
+	fi'
 	@echo "Waiting for DUT completion signal..."
 	@while [ ! -f "$(WORKSPACE)/$(PORT)/dut_complete.txt" ]; do \
 		sleep 5; \
