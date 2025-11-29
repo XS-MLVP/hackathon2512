@@ -27,6 +27,7 @@ PORT ?= $(shell $(call RANDOM_PORT))
 PORT := $(PORT)
 OLDPORT ?= 5000
 CONTINUE ?= false
+IFLOW_VERSION ?= 0.3.24 # latest
 ##########################################################################
 
 clean:
@@ -88,7 +89,10 @@ run_one_mcp: init
 	@cp spec/$(DUT_NAME)*.md $(WORKSPACE)/$(PORT)/$(DUT_NAME)/
 	@ucagent $(WORKSPACE)/$(PORT)/ $(DUT_NAME) -s -hm \
 	  --tui --mcp-server-no-file-tools --no-embed-tools -eoc --mcp-server-port $(PORT) $(UCARGS)
-	@cp -r $(WORKSPACE)/$(PORT) $(RESULT)/$(PORT)/RUN_$(N)_$(DUT_BASE)
+	# Only save the result when ucagent is normal exit
+	@if [[ "`cd $(WORKSPACE)/$(PORT)/ && ucagent --hook-message 'continue|quit'`" == "/quit" ]]; then \
+		cp -r $(WORKSPACE)/$(PORT) $(RESULT)/$(PORT)/RUN_$(N)_$(DUT_BASE) \
+	fi
 	@echo "Waiting for DUT completion signal..."
 	@while [ ! -f "$(WORKSPACE)/$(PORT)/dut_complete.txt" ]; do \
 		sleep 5; \
@@ -116,7 +120,7 @@ run_one_cagent:
 	cp ~/.iflow/settings.json $(WORKSPACE)/$(PORT)/.iflow/settings.json
 	sed -i "s/$(OLDPORT)\/mcp/$(PORT)\/mcp/" $(WORKSPACE)/$(PORT)/.iflow/settings.json
 	(sleep 10; tmux send-keys `ucagent --hook-message cagent_init`; sleep 1; tmux send-keys Enter)&
-	cd $(WORKSPACE)/$(PORT) && npx -y @iflow-ai/iflow-cli@latest -y && (echo true > dut_complete.txt)
+	cd $(WORKSPACE)/$(PORT) && npx -y @iflow-ai/iflow-cli@$(IFLOW_VERSION) -y && (echo true > dut_complete.txt)
 	@echo "`date`: DUT iflow execution completed." >> $(RESULT)/$(PORT)/run_log.txt
 
 run:
