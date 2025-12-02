@@ -43,7 +43,7 @@
     └── ...
 ```
 
-UT模块Scala文件地址 (源于：[YunSuan模块](https://github.com/OpenXiangShan/YunSuan)：
+UT模块Scala文件地址（源于：[YunSuan模块](https://github.com/OpenXiangShan/YunSuan)）：
 - VectorFloatAdder：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatAdder.scala)
 - VectorFloatFMA：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatFMA.scala)
 - VectorIdiv：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorIdiv/VectorIdiv.scala)
@@ -323,5 +323,6 @@ test_VectorIdiv_boundary_handling.py:21: AssertionError
 - 听说学生党可以申请 Copilot 教育计划，白嫖 Claude 4.5, GPT-5.1-Codex 等前沿模型（王炸组合：UCAgent-MCP + Copilot CLI + Claude 4.5）
 - 有些bug和设计实现，以及具体使用操作相关，在Spec中不一定有描述
 - LLM 有时候会欺骗你，为了通过Check假装完成了任务，这个时候需要及时人工介入，最好重新开始（一旦它尝试走捷径，结果将变得不靠谱）
+- 长时间工作时，非必要不建议盯着LLM的工作过程，很可能会看它太傻而忍不住终止任务（很多时候它需要经过多次尝试才能找到解决方案）
 - 可以根据需要，定制config文件，修改Guid模板
 
