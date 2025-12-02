@@ -27,7 +27,7 @@ PORT ?= $(shell $(call RANDOM_PORT))
 PORT := $(PORT)
 OLDPORT ?= 5000
 CONTINUE ?= false
-IFLOW_VERSION ?= 0.3.24 # latest
+IFLOW_VERSION ?= latest
 ##########################################################################
 
 clean:

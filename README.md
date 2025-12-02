@@ -122,7 +122,8 @@ TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/*.v
 make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
 
 # 继续上次UCAgent， 不加 CONTINUE=1 会清空工作目录重新运行
-make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000 CONTINUE=1
+# 如果需要通过 tmux 正常退出 iflow，请指定 IFLOW_VERSION=0.3.24
+make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000 CONTINUE=1 IFLOW_VERSION=0.3.24
 
 # 清空临时数据
 make clean
