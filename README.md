@@ -322,4 +322,6 @@ test_VectorIdiv_boundary_handling.py:21: AssertionError
 - DUT的功能明确，接口简单，如果此时Verilog文件太长或者复杂(例如混淆)，则可清空对应RTL内容避免给LLM上下文带来负担。
 - 听说学生党可以申请 Copilot 教育计划，白嫖 Claude 4.5, GPT-5.1-Codex 等前沿模型（王炸组合：UCAgent-MCP + Copilot CLI + Claude 4.5）
 - 有些bug和设计实现，以及具体使用操作相关，在Spec中不一定有描述
+- LLM 有时候会欺骗你，为了通过Check假装完成了任务，这个时候需要及时人工介入，最好重新开始（一旦它尝试走捷径，结果将变得不靠谱）
+- 可以根据需要，定制config文件，修改Guid模板
 
