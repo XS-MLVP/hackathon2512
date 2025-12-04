@@ -122,7 +122,8 @@ TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/*.v
 make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
 
 # 继续上次UCAgent， 不加 CONTINUE=1 会清空工作目录重新运行
-# 如果需要通过 tmux 正常退出 iflow，请指定 IFLOW_VERSION=0.3.24
+# 如果需要通过 tmux 正常退出 iflow，请指定 IFLOW_VERSION=0.3.24 （跟高版本有退出bug）
+# iFlow更新很快，latest可能不稳定，需要自行选择合适版本，例如 0.3.30
 make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000 CONTINUE=1 IFLOW_VERSION=0.3.24
 
 # 清空临时数据
@@ -325,4 +326,6 @@ test_VectorIdiv_boundary_handling.py:21: AssertionError
 - LLM 有时候会欺骗你，为了通过Check假装完成了任务，这个时候需要及时人工介入，最好重新开始（一旦它尝试走捷径，结果将变得不靠谱）
 - 长时间工作时，非必要不建议盯着LLM的工作过程，很可能会看它太傻而忍不住终止任务（很多时候它需要经过多次尝试才能找到解决方案）
 - 可以根据需要，定制config文件，修改Guid模板
-
+- 人机协同能发现更多的bug（聪明的LLM很多时候想的是如何骗过Checker而不是完成任务，此时需要人工检查/交互，LLM更关注人的输入，而不是MCP工具返回的Message）
+- 如果确定/怀疑某个地方有bug，可以通过提示词（或者验证输入文档）指定需要重点验证的方向/功能/模块
+- 可以把LLM当成一个容易犯错的实习生去对待，让它完成重复无挑战的事情，然后基于它的成果进行人工完善
