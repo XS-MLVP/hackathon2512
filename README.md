@@ -43,15 +43,15 @@
     └── ...
 ```
 
-UT模块Scala文件地址 (源于：https://github.com/OpenXiangShan/YunSuan)：
+UT模块Scala文件地址（源于：[YunSuan模块](https://github.com/OpenXiangShan/YunSuan)）：
 - VectorFloatAdder：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatAdder.scala)
 - VectorFloatFMA：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatFMA.scala)
-- VectorIdiv：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorFloatFMA.scala)
+- VectorIdiv：[点击打开](https://github.com/OpenXiangShan/YunSuan/blob/master/src/main/scala/yunsuan/vector/VectorIdiv/VectorIdiv.scala)
 
 其他参考文档(请从官方spec中摘取DUT相关内容作为UCAgent的输入)：
 
 - RISC-V官方V扩展Spec：[点击打开](https://github.com/riscvarchive/riscv-v-spec/blob/master/v-spec.adoc)
-- RISC-V官方ISA-Spec：[点击打开]https://docs.riscv.org/reference/isa/
+- RISC-V官方ISA-Spec：[点击打开](https://docs.riscv.org/reference/isa/)
 
 ### 安装依赖
 
@@ -102,7 +102,7 @@ git clone https://github.com/XS-MLVP/hackathon2512.git
 
 cd hackathon2512
 
-# 编译DUT（可选）
+# 编译DUT (Design Under Test) 该步骤可选
 make build_dut_cache
 
 # 自动顺序验证，基于Tmux（需要提前完成iFlow登录认证）
@@ -116,12 +116,15 @@ make run VTARGET=bug_file/VectorIdiv_bug_1.v TIMES=3
 
 # 修改UCAgent默认参数
 TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/VectorIdiv_origin.v
+TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/*.v
 
 # 单独启动DUT的MCP服务
 make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000
 
 # 继续上次UCAgent， 不加 CONTINUE=1 会清空工作目录重新运行
-make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000 CONTINUE=1
+# 如果需要通过 tmux 正常退出 iflow，请指定 IFLOW_VERSION=0.3.24 （跟高版本有退出bug）
+# iFlow更新很快，latest可能不稳定，需要自行选择合适版本，例如 0.3.30
+make run_seq_mcp VTARGET=bug_file/VectorIdiv_bug_1.v PORT=5000 CONTINUE=1 IFLOW_VERSION=0.3.24
 
 # 清空临时数据
 make clean
@@ -187,7 +190,7 @@ Bug提交账号、langfuse的key等，会在活动正式开始时私信发送，
 
 #### 案例（一）
 
-思路：由于已经提供了功能全部正常的Origin版本RTL，因此可以基于Origin版本收集测试用例，然后在有Bug版本的RTL进行回归测试。
+思路：由于已经提供了功能全部正常的Origin版本RTL，因此可以基于Origin版本收集测试用例，然后基于有Bug版本的RTL进行回归测试。
 
 ##### 关键步骤：
 
@@ -196,6 +199,7 @@ Bug提交账号、langfuse的key等，会在活动正式开始时私信发送，
 ```bash
 # 提前编译所有 DUT
 make build_dut_cache
+
 # 清空RTL文件内容，进行'黑盒验证'
 echo "" > dutcache/VectorIdiv_origin/VectorIdiv/VectorIdiv.v
 ```
@@ -209,6 +213,8 @@ npx -y @iflow-ai/iflow-cli@latest
 # 关闭测试用例模板强制Fail检查来进行UT验证
 TEMPLATE_MUST_FAIL=false make run VTARGET=origin_file/VectorIdiv_origin.v
 ```
+
+上述UCAgent全自动验证过程持续约3个小时左右。
 
 ###### （3）检验测试用例
 
@@ -316,4 +322,10 @@ test_VectorIdiv_boundary_handling.py:21: AssertionError
 - 使用更强的模型，对于一些商业模型，训练数据中就包含了 RSIC-V 的 Specification，不给完整spec也能发现bug。
 - DUT的功能明确，接口简单，如果此时Verilog文件太长或者复杂(例如混淆)，则可清空对应RTL内容避免给LLM上下文带来负担。
 - 听说学生党可以申请 Copilot 教育计划，白嫖 Claude 4.5, GPT-5.1-Codex 等前沿模型（王炸组合：UCAgent-MCP + Copilot CLI + Claude 4.5）
-
+- 有些bug和设计实现，以及具体使用操作相关，在Spec中不一定有描述
+- LLM 有时候会欺骗你，为了通过Check假装完成了任务，这个时候需要及时人工介入，最好重新开始（一旦它尝试走捷径，结果将变得不靠谱）
+- 长时间工作时，非必要不建议盯着LLM的工作过程，很可能会看它太傻而忍不住终止任务（很多时候它需要经过多次尝试才能找到解决方案）
+- 可以根据需要，定制config文件，修改Guid模板
+- 人机协同能发现更多的bug（聪明的LLM很多时候想的是如何骗过Checker而不是完成任务，此时需要人工检查/交互，LLM更关注人的输入，而不是MCP工具返回的Message）
+- 如果确定/怀疑某个地方有bug，可以通过提示词（或者验证输入文档）指定需要重点验证的方向/功能/模块
+- 可以把LLM当成一个容易犯错的实习生去对待，让它完成重复无挑战的事情，然后基于它的成果进行人工完善

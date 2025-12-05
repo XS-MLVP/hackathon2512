@@ -27,16 +27,22 @@ PORT ?= $(shell $(call RANDOM_PORT))
 PORT := $(PORT)
 OLDPORT ?= 5000
 CONTINUE ?= false
+IFLOW_VERSION ?= latest
 ##########################################################################
 
 clean:
 	@rm -rf $(WORKSPACE)
 	echo "clean $(WORKSPACE)"
 
-clean_all: clean
+clean_result:
 	@rm -rf $(RESULT)
+	echo "clean $(RESULT)"
+
+clean_dut_cache:
 	@rm -rf $(DUTDIR)
 	echo "clean $(RESULT) $(DUTDIR)"
+
+clean_all: clean clean_result clean_dut_cache
 
 init:
 	@mkdir -p $(WORKSPACE)/$(PORT)
@@ -79,11 +85,19 @@ run_seq_mcp:
 run_one_mcp: init
 	@echo "`date`: " $(N) $(DUT_FILE) ">>>>>" $(DUT_NAME) ">>>>" $(DUT_BASE) ">>>>" $(PORT) >> $(RESULT)/$(PORT)/run_log.txt
 	$(MAKE) build_one_dut DUT_FILE=$(DUT_FILE) DUT_NAME=$(DUT_NAME) DUT_BASE=$(DUT_BASE) DUTDIR=$(DUTDIR) PORT=$(PORT)
-	@cp -r $(DUTDIR)/$(DUT_BASE)/$(DUT_NAME) $(WORKSPACE)/$(PORT)/
+	@if [ ! -d "$(WORKSPACE)/$(PORT)/$(DUT_NAME)" ]; then \
+	    cp -r $(DUTDIR)/$(DUT_BASE)/$(DUT_NAME) $(WORKSPACE)/$(PORT)/; \
+	    echo "Copy dut $(DUT_NAME) complete"; \
+	fi
 	@cp spec/$(DUT_NAME)*.md $(WORKSPACE)/$(PORT)/$(DUT_NAME)/
 	@ucagent $(WORKSPACE)/$(PORT)/ $(DUT_NAME) -s -hm \
 	  --tui --mcp-server-no-file-tools --no-embed-tools -eoc --mcp-server-port $(PORT) $(UCARGS)
-	@cp -r $(WORKSPACE)/$(PORT) $(RESULT)/$(PORT)/RUN_$(N)_$(DUT_BASE)
+	# Only save the result when ucagent is normal exit
+	@bash -lc 'IS_CMP=$$(cd "$(WORKSPACE)/$(PORT)/" && ucagent --hook-message "continue|quit"); \
+	if [[ "$$IS_CMP" = "/quit" ]]; then \
+	    cp -r $(WORKSPACE)/$(PORT) $(RESULT)/$(PORT)/RUN_$(N)_$(DUT_BASE); \
+	    echo "Copy result $(N)_$(DUT_BASE) complete"; \
+	fi'
 	@echo "Waiting for DUT completion signal..."
 	@while [ ! -f "$(WORKSPACE)/$(PORT)/dut_complete.txt" ]; do \
 		sleep 5; \
@@ -111,7 +125,7 @@ run_one_cagent:
 	cp ~/.iflow/settings.json $(WORKSPACE)/$(PORT)/.iflow/settings.json
 	sed -i "s/$(OLDPORT)\/mcp/$(PORT)\/mcp/" $(WORKSPACE)/$(PORT)/.iflow/settings.json
 	(sleep 10; tmux send-keys `ucagent --hook-message cagent_init`; sleep 1; tmux send-keys Enter)&
-	cd $(WORKSPACE)/$(PORT) && npx -y @iflow-ai/iflow-cli@latest -y && (echo true > dut_complete.txt)
+	cd $(WORKSPACE)/$(PORT) && npx -y @iflow-ai/iflow-cli@$(IFLOW_VERSION) -y && (echo true > dut_complete.txt)
 	@echo "`date`: DUT iflow execution completed." >> $(RESULT)/$(PORT)/run_log.txt
 
 run:
