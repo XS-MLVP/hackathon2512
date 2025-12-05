@@ -126,3 +126,4 @@ FP64格式时，低5位有效（1个结果）。
 在bug分析时，请尽可能详细描述bug表现，且描述功能与spec不一致的地方。
 参考rtl：VectorFloatAdder_RTL/VectorFloatAdder.v
 
+[请根据需要完善该文档]
