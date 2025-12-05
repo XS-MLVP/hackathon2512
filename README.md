@@ -168,19 +168,19 @@ bug25112001_overflow.zip
 提交要求同“找Bug赛道” （无提交次数限制）。
 
 #### 提交地址
-- 成果提交地址：http://82.157.193.13:10101 （暂未开通）
+- 成果提交地址：https://82.157.193.13:10101 （暂未开通）
 
 
 **API 模式接入Token监控**
 
-- Langfuse监控地址：http://82.157.193.13:10102 （暂未开通，用于效率赛道记录 UCAgent 的 Token 使用情况）
+- Langfuse监控地址：https://82.157.193.13:10102 （暂未开通，用于效率赛道记录 UCAgent 的 Token 使用情况）
 - 在UCAgent的yaml配置中填写(例如：~/.ucagent/setting.yaml)：
 ```
 langfuse:
   enable: $(ENABLE_LANGFUSE, true)
   public_key: $(LANGFUSE_PUBLIC_KEY, <YOUR_LANGFUSE_PUBLIC_KEY>)
   secret_key: $(LANGFUSE_SECRET_KEY, <YOUR_LANGFUSE_SECRET_KEY>)
-  base_url: $(LANGFUSE_URL, http://82.157.193.13:10102)
+  base_url: $(LANGFUSE_URL, https://82.157.193.13:10102)
 ```
 
 
