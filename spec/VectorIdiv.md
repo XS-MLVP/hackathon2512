@@ -13,7 +13,7 @@ VectorIdiv是一个向量整数除法器，支持多种位宽的整数除法运�
   - io_flush 中断正在执行的计算，使得结果无效，进而可以开启下一个新的运算
 
 - 输入引脚
-  - io_sign 符号位
+  - io_sign 有无符号数
   - io_dividend_v 被除数（128位）
   - io_divisor_v 除数（128位）
   - io_div_in_valid 输入数据是否有效
