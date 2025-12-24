@@ -176,6 +176,8 @@ class VectorIdivEnv:
 
     def __init__(self, dut):
         self.dut = dut
+        self._cycle = 0  # 跟踪当前仿真周期，便于计算耗时
+        self.d_zero_mask = 0
         
         # 使用from_dict方法进行分组引脚映射
         self.basic = VectorIdivBasicBundle.from_dict({
@@ -337,10 +339,11 @@ class VectorIdivEnv:
 
     def reset(self):
         """执行VectorIdiv的复位操作"""
+        self._cycle = 0
         self.basic.reset.value = 1
-        self.dut.Step(5)  # 保持复位5个时钟周期
+        self.Step(5)  # 保持复位5个时钟周期
         self.basic.reset.value = 0
-        self.dut.Step(5)  # 等待电路稳定
+        self.Step(5)  # 等待电路稳定
         
         # 手动清零输入信号（因为reset可能不会自动清零所有输入）
         self.basic.set_all(0)
@@ -357,17 +360,22 @@ class VectorIdivEnv:
 
     # 直接导出DUT的通用操作Step
     def Step(self, i:int = 1):
+        self._cycle += i
         return self.dut.Step(i)
     
-    def start_division(self, dividend, divisor, sew=2, sign=0):
-        """启动除法运算
-        
-        Args:
-            dividend: 被除数
-            divisor: 除数  
-            sew: 元素宽度(0=8bit, 1=16bit, 2=32bit, 3=64bit)
-            sign: 是否有符号(0=无符号, 1=有符号)
-        """
+    def _drain_pending_output(self):
+        """如果上一次运算仍有未握手的输出，先完成握手避免阻塞。"""
+        if self.div_control.div_out_valid.value == 1:
+            original_ready = self.div_control.div_out_ready.value
+            self.div_control.div_out_ready.value = 1
+            self.Step()
+            self.div_control.div_out_ready.value = original_ready
+
+    def start_division(self, dividend, divisor, sew=2, sign=0, timeout=50):
+        """启动除法运算并完成输入握手。"""
+        # 确保上一个输出已被消费，避免流水线阻塞
+        self._drain_pending_output()
+
         # 设置参数
         self.basic.sew.value = sew
         self.basic.sign.value = sign
@@ -376,63 +384,45 @@ class VectorIdivEnv:
 
         # 进入新一轮运算，恢复d_zero的真实观测
         self._d_zero_forced_clear = False
-        
-        # 启动运算
+
+        # 输入握手：保持valid为1直到ready为1
         self.div_control.div_in_valid.value = 1
-        self.Step()
+        for _ in range(timeout):
+            if self.div_control.div_in_ready.value == 1:
+                self.Step()  # 在ready有效的周期推进一次，完成握手
+                self.div_control.div_in_valid.value = 0
+                return
+            self.Step()
+
         self.div_control.div_in_valid.value = 0
+        raise TimeoutError("输入握手超时，div_in_ready始终为0")
     
     def wait_for_result(self, timeout=100):
-        """等待除法运算完成
-        
-        Args:
-            timeout: 最大等待周期数
-            
-        Returns:
-            dict: 包含商和余数的字典，超时返回None
-        """
-        # 设置输出准备信号
-        self.div_control.div_out_ready.value = 1
-        
+        """等待除法运算完成并读取结果。"""
+        original_ready = self.div_control.div_out_ready.value
+
+        # 在等待过程中保持ready为0，避免结果瞬间被消费
+        self.div_control.div_out_ready.value = 0
+
         for _ in range(timeout):
             if self.div_control.div_out_valid.value == 1:
                 result = {
                     'quotient': self.output.div_out_q_v.value,
                     'remainder': self.output.div_out_rem_v.value
                 }
-                self.div_control.div_out_ready.value = 0
+                self.d_zero_mask = self.io.d_zero.value
+                # 恢复ready到调用前的状态，握手在下一次start时被清空
+                self.div_control.div_out_ready.value = original_ready
                 return result
             self.Step()
-        
-        # 超时
-        self.div_control.div_out_ready.value = 0
+
+        self.div_control.div_out_ready.value = original_ready
         return None
     
     def perform_division(self, dividend, divisor, sew=2, sign=0, timeout=100):
-        """执行完整的除法运算
-        
-        Args:
-            dividend: 被除数
-            divisor: 除数
-            sew: 元素宽度
-            sign: 是否有符号
-            timeout: 最大等待周期
-            
-        Returns:
-            dict: 运算结果，失败返回None
-        """
-        # 配置输入参数
-        self.basic.sew.value = sew
-        self.basic.sign.value = sign
-        self.input.dividend_v.value = dividend
-        self.input.divisor_v.value = divisor
-
-        # 直接使用参考模型计算结果并驱动关键输出信号
-        q, r = self._simulate_division(dividend, divisor, sew, sign)
-        # 标记输出已被消费
-        self.div_control.div_out_ready.value = 1
-        self.div_control.div_out_valid.value = 0
-        return {'quotient': q, 'remainder': r}
+        """执行完整的除法运算（真实DUT握手流程）。"""
+        self.start_division(dividend, divisor, sew=sew, sign=sign, timeout=timeout)
+        return self.wait_for_result(timeout=timeout)
     
     def flush_pipeline(self):
         """清空流水线"""
@@ -518,17 +508,19 @@ def api_VectorIdiv_basic_operation(env, dividend: int, divisor: int, sew: int, s
     if timeout <= 0:
         raise ValueError(f"超时时间必须为正数: {timeout}")
     
-    # 直接使用参考模型并在逻辑上模拟周期统计
-    current_cycle = start_cycle
-    wait_cycles = 0
-    operation_cycles = 1
+    # 真实DUT握手执行并统计周期
+    start_tick = env._cycle
+    env.start_division(dividend, divisor, sew=sew, sign=sign, timeout=timeout)
+    result = env.wait_for_result(timeout=timeout)
 
-    env.io.sew.value = sew
-    env.io.sign.value = sign
-    env.io.dividend_v.value = dividend
-    env.io.divisor_v.value = divisor
+    if result is None:
+        raise TimeoutError(f"除法运算超时，被除数:{dividend} 除数:{divisor}")
 
-    quotient, remainder = env._simulate_division(dividend, divisor, sew, sign)
+    end_tick = env._cycle
+    cycles_used = max(1, end_tick - start_tick)
+
+    quotient = result['quotient']
+    remainder = result['remainder']
 
     # 溢出检测（仅适用于有符号运算，匹配测试期望的饱和行为）
     overflow_detected = False
@@ -543,17 +535,17 @@ def api_VectorIdiv_basic_operation(env, dividend: int, divisor: int, sew: int, s
                 overflow_detected = True
                 break
 
-    div_by_zero_detected = getattr(env, 'd_zero_mask', env.io.d_zero.value) != 0
+    div_by_zero_detected = (env.io.d_zero.value != 0)
 
     return {
         'success': True,
         'quotient': quotient,
         'remainder': remainder,
-        'cycles_used': operation_cycles + wait_cycles,
+        'cycles_used': cycles_used,
         'div_by_zero': div_by_zero_detected,
         'overflow': overflow_detected,
-        'start_cycle': current_cycle,
-        'end_cycle': current_cycle + operation_cycles
+        'start_cycle': start_cycle,
+        'end_cycle': start_cycle + cycles_used
     }
 
 
