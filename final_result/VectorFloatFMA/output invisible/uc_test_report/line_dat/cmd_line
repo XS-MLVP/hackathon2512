@@ -1,0 +1,1 @@
+genhtml --branch-coverage /home/piyan/Downloads/UCAgent/output/uc_test_report/line_dat/merged.info -o /home/piyan/Downloads/UCAgent/output/uc_test_report/line_dat

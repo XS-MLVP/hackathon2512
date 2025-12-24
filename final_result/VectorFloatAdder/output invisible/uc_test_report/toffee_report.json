@@ -1,0 +1,1171 @@
+{
+    "config": "<_pytest.config.Config object at 0xf1cfedf9bd40>",
+    "tests": [
+        {
+            "item": "<Function test_Bug_1>",
+            "phases": [
+                {
+                    "call": "<CallInfo when='setup' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_1' when='setup' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='call' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_1' when='call' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "passed",
+                        "letter": ".",
+                        "word": "PASSED",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='teardown' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_1' when='teardown' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                }
+            ],
+            "started": 1766482065.666281,
+            "ended": 1766482065.7538054,
+            "status": {
+                "category": "passed",
+                "letter": ".",
+                "word": "PASSED",
+                "style": {}
+            }
+        },
+        {
+            "item": "<Function test_Bug_2>",
+            "phases": [
+                {
+                    "call": "<CallInfo when='setup' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_2' when='setup' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='call' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_2' when='call' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "passed",
+                        "letter": ".",
+                        "word": "PASSED",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='teardown' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_2' when='teardown' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                }
+            ],
+            "started": 1766482065.7539442,
+            "ended": 1766482065.8077688,
+            "status": {
+                "category": "passed",
+                "letter": ".",
+                "word": "PASSED",
+                "style": {}
+            }
+        },
+        {
+            "item": "<Function test_Bug_3>",
+            "phases": [
+                {
+                    "call": "<CallInfo when='setup' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_3' when='setup' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='call' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_3' when='call' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "passed",
+                        "letter": ".",
+                        "word": "PASSED",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='teardown' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_3' when='teardown' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                }
+            ],
+            "started": 1766482065.8078752,
+            "ended": 1766482065.8580961,
+            "status": {
+                "category": "passed",
+                "letter": ".",
+                "word": "PASSED",
+                "style": {}
+            }
+        },
+        {
+            "item": "<Function test_Bug_4>",
+            "phases": [
+                {
+                    "call": "<CallInfo when='setup' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_4' when='setup' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='call' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_4' when='call' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "passed",
+                        "letter": ".",
+                        "word": "PASSED",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='teardown' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_4' when='teardown' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                }
+            ],
+            "started": 1766482065.8581948,
+            "ended": 1766482065.9103575,
+            "status": {
+                "category": "passed",
+                "letter": ".",
+                "word": "PASSED",
+                "style": {}
+            }
+        },
+        {
+            "item": "<Function test_Bug_5>",
+            "phases": [
+                {
+                    "call": "<CallInfo when='setup' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_5' when='setup' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='call' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_5' when='call' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "passed",
+                        "letter": ".",
+                        "word": "PASSED",
+                        "style": {}
+                    }
+                },
+                {
+                    "call": "<CallInfo when='teardown' result: None>",
+                    "report": "<TestReport 'tests/test_bugs.py::test_Bug_5' when='teardown' outcome='passed'>",
+                    "log_records": [],
+                    "sections": [],
+                    "status": {
+                        "category": "",
+                        "letter": "",
+                        "word": "",
+                        "style": {}
+                    }
+                }
+            ],
+            "started": 1766482065.9104807,
+            "ended": 1766482065.9590886,
+            "status": {
+                "category": "passed",
+                "letter": ".",
+                "word": "PASSED",
+                "style": {}
+            }
+        }
+    ],
+    "warnings": [],
+    "session": "<Session  exitstatus=0 testsfailed=0 testscollected=5>",
+    "started": 1766482065.6489692,
+    "items": {
+        "tests/test_bugs.py::test_Bug_1": "<Function test_Bug_1>",
+        "tests/test_bugs.py::test_Bug_2": "<Function test_Bug_2>",
+        "tests/test_bugs.py::test_Bug_3": "<Function test_Bug_3>",
+        "tests/test_bugs.py::test_Bug_4": "<Function test_Bug_4>",
+        "tests/test_bugs.py::test_Bug_5": "<Function test_Bug_5>"
+    },
+    "ended": 1766482065.959175,
+    "colors": {
+        "passed": [
+            "#43A047",
+            "#FFFFFF"
+        ],
+        "failed": [
+            "#F44336",
+            "#FFFFFF"
+        ],
+        "error": [
+            "#B71C1C",
+            "#FFFFFF"
+        ],
+        "xfailed": [
+            "#EF9A9A",
+            "#222222"
+        ],
+        "xpassed": [
+            "#A5D6A7",
+            "#222222"
+        ],
+        "skipped": [
+            "#9E9E9E",
+            "#FFFFFF"
+        ],
+        "notrun": [
+            "#9E9E9E",
+            "#FFFFFF"
+        ],
+        "rerun": [
+            "#FBC02D",
+            "#222222"
+        ],
+        "warning": [
+            "#FBC02D",
+            "#222222"
+        ],
+        "green": [
+            "#43A047",
+            "#FFFFFF"
+        ],
+        "red": [
+            "#E53935",
+            "#FFFFFF"
+        ],
+        "yellow": [
+            "#FBC02D",
+            "#222222"
+        ]
+    },
+    "time_format": "%Y-%m-%d %H:%M:%S",
+    "metadata": {},
+    "user": {
+        "name": "UCAgent-0.9.1.source-code",
+        "email": "unitychip@bosc.ac.cn"
+    },
+    "title": "VectorFloatAdder Test Report",
+    "coverages": {
+        "line": {
+            "hints": 1173,
+            "total": 1173,
+            "grate": 99,
+            "ignore": [
+                [
+                    "/home/parallels/UCAgentO/output/unity_test/tests/data/toffee_tmp_20251223172745_647/master/test_Bug_1.dat",
+                    [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder.ignore"
+                    ],
+                    []
+                ],
+                [
+                    "/home/parallels/UCAgentO/output/unity_test/tests/data/toffee_tmp_20251223172745_647/master/test_Bug_2.dat",
+                    [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder.ignore"
+                    ],
+                    [
+                        "",
+                        "*/VectorFloatAdder/VectorFloatAdder_top.sv",
+                        "*/VectorFloatAdder/VectorFloatAdder_top.v"
+                    ]
+                ],
+                [
+                    "/home/parallels/UCAgentO/output/unity_test/tests/data/toffee_tmp_20251223172745_647/master/test_Bug_3.dat",
+                    [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder.ignore"
+                    ],
+                    [
+                        "",
+                        "*/VectorFloatAdder/VectorFloatAdder_top.sv",
+                        "*/VectorFloatAdder/VectorFloatAdder_top.v"
+                    ]
+                ],
+                [
+                    "/home/parallels/UCAgentO/output/unity_test/tests/data/toffee_tmp_20251223172745_647/master/test_Bug_4.dat",
+                    [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder.ignore"
+                    ],
+                    [
+                        "",
+                        "*/VectorFloatAdder/VectorFloatAdder_top.sv",
+                        "*/VectorFloatAdder/VectorFloatAdder_top.v"
+                    ]
+                ],
+                [
+                    "/home/parallels/UCAgentO/output/unity_test/tests/data/toffee_tmp_20251223172745_647/master/test_Bug_5.dat",
+                    [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder.ignore"
+                    ],
+                    [
+                        "",
+                        "*/VectorFloatAdder/VectorFloatAdder_top.sv",
+                        "*/VectorFloatAdder/VectorFloatAdder_top.v"
+                    ]
+                ]
+            ],
+            "error": ""
+        },
+        "functional": {
+            "groups": [
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": false,
+                            "bins": [
+                                {
+                                    "name": "CK-DUMMY",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FADD",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-FCLASS",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FEQ",
+                                    "hints": 0
+                                },
+                                {
+                                    "name": "CK-FGE",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FGT",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FLE",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FLEQ",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FLT",
+                                    "hints": 0
+                                },
+                                {
+                                    "name": "CK-FLTQ",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMAX",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMAX-RE",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMAXM",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMERGE",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMIN",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMIN-RE",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMINM",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMOVE",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMV-F-S",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FMV-S-F",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FNE",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FSGNJ",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FSGNJN",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FSGNJX",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FSUB",
+                                    "hints": 0
+                                },
+                                {
+                                    "name": "CK-FSUM-ORE",
+                                    "hints": 26
+                                },
+                                {
+                                    "name": "CK-FSUM-URE",
+                                    "hints": 26
+                                }
+                            ],
+                            "name": "FC-OPERATION",
+                            "functions": {},
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-API",
+                    "hinted": false,
+                    "bin_num_total": 27,
+                    "bin_num_hints": 24,
+                    "point_num_total": 1,
+                    "point_num_hints": 0,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 9,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 13,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": []
+                },
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-BASIC",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-VECTOR-PARALLEL",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-MIXED-PRECISION",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-ROUNDING",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-FLAGS",
+                                    "hints": 1
+                                }
+                            ],
+                            "name": "FC-FADD",
+                            "functions": {},
+                            "dynamic_bin": false
+                        },
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-BASIC",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-VECTOR-PARALLEL",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-MIXED-PRECISION",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-ROUNDING",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-FLAGS",
+                                    "hints": 1
+                                }
+                            ],
+                            "name": "FC-FSUB",
+                            "functions": {},
+                            "dynamic_bin": false
+                        },
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-ORDERED",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-OVERFLOW",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-PRECISION",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-UNCONSTRAINED",
+                                    "hints": 1
+                                }
+                            ],
+                            "name": "FC-VECTOR-SUM",
+                            "functions": {},
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-ARITHMETIC",
+                    "hinted": true,
+                    "bin_num_total": 14,
+                    "bin_num_hints": 14,
+                    "point_num_total": 3,
+                    "point_num_hints": 3,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 10,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 1,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": []
+                },
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-EQUAL",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-NOT-EQUAL",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-LESS",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-LESS-EQUAL",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-GREATER",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-GREATER-EQUAL",
+                                    "hints": 1
+                                }
+                            ],
+                            "name": "FC-BASIC-CMP",
+                            "functions": {},
+                            "dynamic_bin": false
+                        },
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-QUIET-LE",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-QUIET-LT",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-NO-FLAGS",
+                                    "hints": 1
+                                }
+                            ],
+                            "name": "FC-QUIET-CMP",
+                            "functions": {},
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-COMPARISON",
+                    "hinted": true,
+                    "bin_num_total": 9,
+                    "bin_num_hints": 9,
+                    "point_num_total": 2,
+                    "point_num_hints": 2,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 11,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 1,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": []
+                },
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-MIN",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-MAX",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-SPECIAL",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-ORDERED",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-MASKED",
+                                    "hints": 2
+                                }
+                            ],
+                            "name": "FC-EXTREME-FIND",
+                            "functions": {
+                                "CK-MAX": [
+                                    "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:7-29::test_Bug_1"
+                                ]
+                            },
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-EXTREME",
+                    "hinted": true,
+                    "bin_num_total": 5,
+                    "bin_num_hints": 5,
+                    "point_num_total": 1,
+                    "point_num_hints": 1,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 12,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 1,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:7-29::test_Bug_1"
+                    ]
+                },
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-MERGE",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-MOVE",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-SCALAR-TO-VECTOR",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-VECTOR-TO-SCALAR",
+                                    "hints": 1
+                                }
+                            ],
+                            "name": "FC-DATA-MOVE",
+                            "functions": {},
+                            "dynamic_bin": false
+                        },
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-SIGN-INJECT",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-SIGN-INJECT-NOT",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-SIGN-INJECT-XOR",
+                                    "hints": 1
+                                }
+                            ],
+                            "name": "FC-SIGN-OP",
+                            "functions": {},
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-DATA-OP",
+                    "hinted": true,
+                    "bin_num_total": 7,
+                    "bin_num_hints": 7,
+                    "point_num_total": 2,
+                    "point_num_hints": 2,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 13,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 1,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": []
+                },
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-CLASSIFY",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-SPECIAL-TYPES",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-NORMAL-TYPES",
+                                    "hints": 2
+                                }
+                            ],
+                            "name": "FC-FLOAT-CLASS",
+                            "functions": {
+                                "CK-CLASSIFY": [
+                                    "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:54-74::test_Bug_3"
+                                ]
+                            },
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-SPECIAL",
+                    "hinted": true,
+                    "bin_num_total": 3,
+                    "bin_num_hints": 3,
+                    "point_num_total": 1,
+                    "point_num_hints": 1,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 14,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 1,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:54-74::test_Bug_3"
+                    ]
+                },
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-F16",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-F32",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-F64",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-PARALLEL",
+                                    "hints": 1
+                                }
+                            ],
+                            "name": "FC-MULTI-PRECISION",
+                            "functions": {},
+                            "dynamic_bin": false
+                        },
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-F64-F32",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-F32-F16",
+                                    "hints": 1
+                                },
+                                {
+                                    "name": "CK-CONVERSION",
+                                    "hints": 1
+                                }
+                            ],
+                            "name": "FC-MIXED-PRECISION",
+                            "functions": {},
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-FORMAT-PRECISION",
+                    "hinted": true,
+                    "bin_num_total": 7,
+                    "bin_num_hints": 7,
+                    "point_num_total": 2,
+                    "point_num_hints": 2,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 15,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 1,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": []
+                },
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-RNE",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-RTZ",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-RDN",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-RUP",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-RMM",
+                                    "hints": 2
+                                }
+                            ],
+                            "name": "FC-ROUNDING-MODE",
+                            "functions": {},
+                            "dynamic_bin": false
+                        },
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-INVALID-OP",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-OVERFLOW",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-UNDERFLOW",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-INEXACT",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-SPECIAL-VALUES",
+                                    "hints": 2
+                                }
+                            ],
+                            "name": "FC-EXCEPTION-HANDLE",
+                            "functions": {
+                                "CK-INVALID-OP": [
+                                    "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:76-95::test_Bug_4"
+                                ]
+                            },
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-ROUNDING-EXCEPTION",
+                    "hinted": true,
+                    "bin_num_total": 10,
+                    "bin_num_hints": 10,
+                    "point_num_total": 2,
+                    "point_num_hints": 2,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 16,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 1,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:76-95::test_Bug_4"
+                    ]
+                },
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-INF-INPUT",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-INF-ARITHMETIC",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-INF-SIGN",
+                                    "hints": 2
+                                }
+                            ],
+                            "name": "FC-INF-HANDLE",
+                            "functions": {
+                                "CK-INF-ARITHMETIC": [
+                                    "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:31-52::test_Bug_2"
+                                ]
+                            },
+                            "dynamic_bin": false
+                        },
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-NAN-INPUT",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-NAN-PROPAGATION",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-CANONICAL-NAN",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-QUIET-NAN",
+                                    "hints": 2
+                                }
+                            ],
+                            "name": "FC-NAN-HANDLE",
+                            "functions": {},
+                            "dynamic_bin": false
+                        },
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-ZERO-INPUT",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-SIGNED-ZERO",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-ZERO-ARITHMETIC",
+                                    "hints": 2
+                                }
+                            ],
+                            "name": "FC-ZERO-HANDLE",
+                            "functions": {},
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-SPECIAL-VALUES",
+                    "hinted": true,
+                    "bin_num_total": 10,
+                    "bin_num_hints": 10,
+                    "point_num_total": 3,
+                    "point_num_hints": 3,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 17,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 1,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:31-52::test_Bug_2"
+                    ]
+                },
+                {
+                    "points": [
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-VECTOR-MODE",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-MASK-CONTROL",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-PARALLEL-EXEC",
+                                    "hints": 2
+                                }
+                            ],
+                            "name": "FC-VECTOR-CTRL",
+                            "functions": {},
+                            "dynamic_bin": false
+                        },
+                        {
+                            "once": true,
+                            "hinted": true,
+                            "bins": [
+                                {
+                                    "name": "CK-REDUCTION-MASK",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-REDUCTION-ORDER",
+                                    "hints": 2
+                                },
+                                {
+                                    "name": "CK-REDUCTION-FOLD",
+                                    "hints": 2
+                                }
+                            ],
+                            "name": "FC-REDUCTION",
+                            "functions": {
+                                "CK-REDUCTION-MASK": [
+                                    "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:97-118::test_Bug_5"
+                                ]
+                            },
+                            "dynamic_bin": false
+                        }
+                    ],
+                    "name": "FG-VECTOR-MASK",
+                    "hinted": true,
+                    "bin_num_total": 6,
+                    "bin_num_hints": 6,
+                    "point_num_total": 2,
+                    "point_num_hints": 2,
+                    "has_once": true,
+                    "__filename__": "/home/parallels/UCAgentO/output/unity_test/tests/VectorFloatAdder_function_coverage_def.py",
+                    "__lineno__": 18,
+                    "__disable_sample_when_point_hinted__": true,
+                    "__sample_count__": 1,
+                    "__sample_calln__": 13,
+                    "__stop_sample__": false,
+                    "point_functions": [
+                        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:97-118::test_Bug_5"
+                    ]
+                }
+            ],
+            "group_num_total": 10,
+            "group_num_hints": 9,
+            "point_num_total": 19,
+            "point_num_hints": 18,
+            "bin_num_total": 98,
+            "bin_num_hints": 95,
+            "grate": 100,
+            "has_once": true
+        }
+    },
+    "test_abstract_info": {
+        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:7-29::test_Bug_1": "PASSED",
+        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:31-52::test_Bug_2": "PASSED",
+        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:54-74::test_Bug_3": "PASSED",
+        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:76-95::test_Bug_4": "PASSED",
+        "/home/parallels/UCAgentO/output/unity_test/tests/test_bugs.py:97-118::test_Bug_5": "PASSED"
+    }
+}
