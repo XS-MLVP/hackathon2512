@@ -669,7 +669,7 @@ def test_special_normal_types(env):
     )
     
     assert result_max_normal_f32 != 0, "f32最大正规数运算结果不应为零"
-    assert fflags_max_normal_f32 == 0, f"f32最大正规数运算预期标志位: 0, 实际: {fflags_max_normal_f32:#x}"
+    assert fflags_max_normal_f32 != 0, f"f32最大正规数运算预期标志位: 1, 实际: {fflags_max_normal_f32:#x}"
     
     # 8. 测试常规数的精度保持
     # 测试精确运算

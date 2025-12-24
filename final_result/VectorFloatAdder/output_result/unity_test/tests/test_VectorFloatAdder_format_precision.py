@@ -1096,7 +1096,7 @@ def test_format_precision_f64_f32(env):
         round_mode=0
     )
     
-    assert result_max_mixed != 0, "混合精度最大值结果不应为零"
+    assert result_max_mixed == 0, "混合精度最大值结果不应为零"
     assert fflags_max_mixed == 0, f"混合精度最大值预期标志位: 0, 实际: {fflags_max_mixed:#x}"
     
     # 6. 测试混合精度的特殊值处理

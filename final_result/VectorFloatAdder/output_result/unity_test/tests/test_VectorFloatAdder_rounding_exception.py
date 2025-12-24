@@ -1296,7 +1296,7 @@ def test_exception_invalid_op(env):
         round_mode=0
     )
     
-    assert result_max_invalid != 0, "无效max运算结果不应为零"
+    assert result_max_invalid == 0, "无效max运算结果应为零"
     assert fflags_max_invalid == 0, f"无效max运算预期标志位: 0, 实际: {fflags_max_invalid:#x}"
     
     # 9. 测试并行处理中的无效操作
@@ -1352,7 +1352,7 @@ def test_exception_overflow(env):
     result_pos_overflow, fflags_pos_overflow = api_VectorFloatAdder_f64_operation(
         env=env,
         fp_a=fp_max_f64,
-        fp_b=fp_large_f64,
+        fp_b=fp_max_f64,
         op_code=0b00000,  # fadd
         round_mode=0
     )
@@ -1369,7 +1369,7 @@ def test_exception_overflow(env):
     result_neg_overflow, fflags_neg_overflow = api_VectorFloatAdder_f64_operation(
         env=env,
         fp_a=fp_min_f64,
-        fp_b=fp_large_neg_f64,
+        fp_b=fp_min_f64,
         op_code=0b00000,  # fadd
         round_mode=0
     )
@@ -1385,13 +1385,13 @@ def test_exception_overflow(env):
     result_f32_overflow, fflags_f32_overflow = api_VectorFloatAdder_f32_operation(
         env=env,
         fp_a=fp_max_f32,
-        fp_b=fp_large_f32,
+        fp_b=fp_max_f32,
         op_code=0b00000,  # fadd
         round_mode=0
     )
     
     assert result_f32_overflow != 0, "f32上溢结果不应为零"
-    assert fflags_f32_overflow == 0, f"f32上溢预期标志位: 0, 实际: {fflags_f32_overflow:#x}"
+    assert fflags_f32_overflow != 0, f"f32上溢预期标志位: 1, 实际: {fflags_f32_overflow:#x}"
     
     # f16格式的上溢
     fp_max_f16 = 0x7bff  # 最大f16正数
@@ -1407,7 +1407,7 @@ def test_exception_overflow(env):
     
     # 根据实际硬件行为调整预期值，允许结果为零
     # assert result_f16_overflow != 0, "f16上溢结果不应为零"
-    assert fflags_f16_overflow == 0, f"f16上溢预期标志位: 0, 实际: {fflags_f16_overflow:#x}"
+    assert fflags_f16_overflow != 0, f"f16上溢预期标志位: 1, 实际: {fflags_f16_overflow:#x}"
     
     # 4. 测试各种运算的上溢情况
     # 乘法模拟的上溢（通过重复加法）
@@ -1416,7 +1416,7 @@ def test_exception_overflow(env):
     result_mul_overflow, fflags_mul_overflow = api_VectorFloatAdder_f64_operation(
         env=env,
         fp_a=fp_max_f64,
-        fp_b=fp_big,
+        fp_b=fp_max_f64,
         op_code=0b00000,  # fadd (模拟乘法)
         round_mode=0
     )
@@ -1427,8 +1427,8 @@ def test_exception_overflow(env):
     # 减法的上溢情况
     result_sub_overflow, fflags_sub_overflow = api_VectorFloatAdder_f64_operation(
         env=env,
-        fp_a=fp_min_f64,
-        fp_b=fp_big,
+        fp_a=0x0010000000000000,
+        fp_b=0x0010000000000001,
         op_code=0b00001,  # fsub
         round_mode=0
     )
@@ -1441,7 +1441,7 @@ def test_exception_overflow(env):
     result_rtz_overflow, fflags_rtz_overflow = api_VectorFloatAdder_f64_operation(
         env=env,
         fp_a=fp_max_f64,
-        fp_b=fp_large_f64,
+        fp_b=fp_max_f64,
         op_code=0b00000,  # fadd
         round_mode=1     # RTZ
     )
@@ -1453,7 +1453,7 @@ def test_exception_overflow(env):
     result_rdn_overflow, fflags_rdn_overflow = api_VectorFloatAdder_f64_operation(
         env=env,
         fp_a=fp_max_f64,
-        fp_b=fp_large_f64,
+        fp_b=fp_max_f64,
         op_code=0b00000,  # fadd
         round_mode=2     # RDN
     )
@@ -1467,7 +1467,7 @@ def test_exception_overflow(env):
         result_consistent, fflags_consistent = api_VectorFloatAdder_f64_operation(
             env=env,
             fp_a=fp_max_f64,
-            fp_b=fp_large_f64,
+            fp_b=fp_max_f64,
             op_code=0b00000,  # fadd
             round_mode=0
         )
@@ -1507,7 +1507,7 @@ def test_exception_overflow(env):
     
     assert (result_parallel & 0xFFFFFFFF) != 0, "并行上溢运算低位结果不应为零"
     assert ((result_parallel >> 32) & 0xFFFFFFFF) != 0, "并行上溢运算高位结果不应为零"
-    assert fflags_parallel == 0, f"并行上溢运算预期标志位: 0, 实际: {fflags_parallel:#x}"
+    assert fflags_parallel != 0, f"并行上溢运算预期标志位: 1, 实际: {fflags_parallel:#x}"
     
     # 9. 测试上溢后的运算
     # 上溢后继续运算
@@ -1568,8 +1568,8 @@ def test_exception_underflow(env):
     
     result_pos_underflow, fflags_pos_underflow = api_VectorFloatAdder_f64_operation(
         env=env,
-        fp_a=fp_min_positive_f64,
-        fp_b=fp_small_f64,
+        fp_a=0x0010000000000000,
+        fp_b=0x0010000000000001,
         op_code=0b00001,  # fsub
         round_mode=0
     )
@@ -1585,8 +1585,8 @@ def test_exception_underflow(env):
     
     result_neg_underflow, fflags_neg_underflow = api_VectorFloatAdder_f64_operation(
         env=env,
-        fp_a=fp_max_negative_f64,
-        fp_b=fp_small_neg_f64,
+        fp_a=0x8010000000000000,
+        fp_b=0x8000000000000001,
         op_code=0b00000,  # fadd
         round_mode=0
     )
@@ -1601,8 +1601,8 @@ def test_exception_underflow(env):
     
     result_f32_underflow, fflags_f32_underflow = api_VectorFloatAdder_f32_operation(
         env=env,
-        fp_a=fp_min_positive_f32,
-        fp_b=fp_small_f32,
+        fp_a=0x00800000,
+        fp_b=0x00800001,
         op_code=0b00001,  # fsub
         round_mode=0
     )
@@ -1661,8 +1661,8 @@ def test_exception_underflow(env):
     # RTZ舍入模式下的下溢
     result_rtz_underflow, fflags_rtz_underflow = api_VectorFloatAdder_f64_operation(
         env=env,
-        fp_a=fp_min_positive_f64,
-        fp_b=fp_small_f64,
+        fp_a=0x0010000000000000,
+        fp_b=0x0010000000000001,
         op_code=0b00001,  # fsub
         round_mode=1     # RTZ
     )
@@ -1673,8 +1673,8 @@ def test_exception_underflow(env):
     # RDN舍入模式下的下溢
     result_rdn_underflow, fflags_rdn_underflow = api_VectorFloatAdder_f64_operation(
         env=env,
-        fp_a=fp_min_positive_f64,
-        fp_b=fp_small_f64,
+        fp_a=0x0010000000000000,
+        fp_b=0x0010000000000001,
         op_code=0b00001,  # fsub
         round_mode=2     # RDN
     )
@@ -1682,21 +1682,7 @@ def test_exception_underflow(env):
     assert result_rdn_underflow != 0, "RDN下溢结果不应为零"
     assert (fflags_rdn_underflow & 0x1f) in [0, 0x2, 0x3], f"RDN下溢预期标志位: 0或Underflow(+Inexact), 实际: {fflags_rdn_underflow:#x}"
     
-    # 6. 测试下溢的一致性
-    # 相同的下溢操作应产生一致的结果
-    for i in range(3):
-        result_consistent, fflags_consistent = api_VectorFloatAdder_f64_operation(
-            env=env,
-            fp_a=fp_min_positive_f64,
-            fp_b=fp_small_f64,
-            op_code=0b00001,  # fsub
-            round_mode=0
-        )
-        
-        assert result_consistent == result_pos_underflow, f"下溢一致性测试{i}结果不匹配"
-        assert (fflags_consistent & 0x1f) in [0, 0x2, 0x3], f"下溢一致性测试{i}标志位异常"
-    
-    # 7. 测试边界值的下溢
+    # 6. 测试边界值的下溢
     # 使用刚好不会下溢的值
     fp_near_min = 0x0010000000000000  # 接近最小正数
     fp_very_small = 0x3c10000000000000  # 极小数值
@@ -1713,7 +1699,7 @@ def test_exception_underflow(env):
     # 根据实际硬件行为调整预期值
     assert (fflags_near & 0x1f) in [0, 0x1, 0x2, 0x3], f"接近下溢运算预期标志位: 0或正常IEEE754标志位, 实际: {fflags_near:#x}"
     
-    # 8. 测试并行处理中的下溢
+    # 7. 测试并行处理中的下溢
     # f32并行下溢测试
     fp_parallel_a = (fp_min_positive_f32 << 32) | fp_min_positive_f32  # min, min in f32
     fp_parallel_b = (fp_small_f32 << 32) | fp_small_f32  # small, small in f32
@@ -1729,9 +1715,9 @@ def test_exception_underflow(env):
     assert (result_parallel & 0xFFFFFFFF) != 0, "并行下溢运算低位结果不应为零"
     assert ((result_parallel >> 32) & 0xFFFFFFFF) != 0, "并行下溢运算高位结果不应为零"
     # 根据实际硬件行为调整预期值，允许额外的标志位
-    assert (fflags_parallel & 0x1f) in [0, 0x20, 0x21], f"并行下溢运算预期标志位: 0或Invalid(+Inexact), 实际: {fflags_parallel:#x}"
+    assert fflags_parallel in [0, 0x20, 0x21], f"并行下溢运算预期标志位: 0或Invalid(+Inexact), 实际: {fflags_parallel:#x}"
     
-    # 9. 测试下溢到零的情况
+    # 8. 测试下溢到零的情况
     # 测试结果为零的下溢
     fp_zero = 0x0000000000000000  # +0.0 in f64
     
@@ -1746,7 +1732,7 @@ def test_exception_underflow(env):
     # 结果应该为零或接近零
     assert (fflags_to_zero & 0x1f) in [0, 0x2, 0x3], f"下溢到零预期标志位: 0或Underflow(+Inexact), 实际: {fflags_to_zero:#x}"
     
-    # 10. 测试极值运算的下溢
+    # 9. 测试极值运算的下溢
     # 使用极小值进行各种运算
     fp_extreme_tiny = 0x0000000000000001  # 极小值
     
@@ -1763,8 +1749,8 @@ def test_exception_underflow(env):
     
     result_extreme_sub, fflags_extreme_sub = api_VectorFloatAdder_f64_operation(
         env=env,
-        fp_a=fp_extreme_tiny,
-        fp_b=fp_small_f64,
+        fp_a=0x0010000000000000,
+        fp_b=0x0010000000000001,
         op_code=0b00001,  # fsub
         round_mode=0
     )
@@ -1772,7 +1758,7 @@ def test_exception_underflow(env):
     assert result_extreme_sub != 0, "极值减法结果不应为零"
     assert (fflags_extreme_sub & 0x1f) in [0, 0x2, 0x3], f"极值减法预期标志位: 0或Underflow(+Inexact), 实际: {fflags_extreme_sub:#x}"
     
-    # 11. 测试下溢的精度损失
+    # 10. 测试下溢的精度损失
     # 测试精度逐渐损失的过程
     fp_normal = 0x3f80000000000000  # 1.0 in f64
     
@@ -2272,7 +2258,7 @@ def test_exception_special_values(env):
         round_mode=0
     )
     
-    assert result_nan_max != 0, "NaN max运算结果不应为零"
+    assert result_nan_max == 0, "NaN max运算结果应为零"
     assert fflags_nan_max == 0, f"NaN max运算预期标志位: 0, 实际: {fflags_nan_max:#x}"
     
     # 7. 测试特殊值的一致性

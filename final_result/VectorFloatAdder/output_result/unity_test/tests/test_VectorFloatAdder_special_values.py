@@ -904,7 +904,7 @@ def test_special_values_inf_input(env):
     )
     
     assert result_inf_neg_inf != 0, "正无穷大加负无穷大结果不应为零"
-    assert (fflags_inf_neg_inf & 0x1f) in [0, 0x1], f"正无穷大加负无穷大预期标志位: 0或Inexact, 实际: {fflags_inf_neg_inf:#x}"
+    assert (fflags_inf_neg_inf & 0x1f) in [0, 0x10], f"正无穷大加负无穷大预期标志位: 0或Inexact, 实际: {fflags_inf_neg_inf:#x}"
     
     # 4. 测试不同精度格式的无穷大输入
     # f32格式的无穷大输入
