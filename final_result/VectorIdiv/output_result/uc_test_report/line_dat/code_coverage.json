@@ -1,0 +1,478 @@
+{
+  "description": "Code coverage summary. `data` field contains uncovered lines",
+  "simulator": "verilator",
+  "overview": {
+    "total": {
+      "line": 2101,
+      "toggle": 15789,
+      "branch": 192,
+      "expr": 0
+    },
+    "miss": {
+      "line": 0,
+      "toggle": 0,
+      "branch": 0,
+      "expr": 0
+    }
+  },
+  "uncovered": {
+    "schema": {
+      "file_path": {
+        "total": [
+          "line",
+          "toggle",
+          "branch",
+          "expr"
+        ],
+        "miss": [
+          "line",
+          "toggle",
+          "branch",
+          "expr"
+        ],
+        "modules": {
+          "module_name": {
+            "total": [
+              "line",
+              "toggle",
+              "branch",
+              "expr"
+            ],
+            "miss": [
+              "line",
+              "toggle",
+              "branch",
+              "expr"
+            ],
+            "line": [
+              "lines"
+            ],
+            "toggle": [
+              "lines"
+            ],
+            "branch": [
+              "lines"
+            ],
+            "expr": [
+              "lines"
+            ]
+          }
+        }
+      }
+    },
+    "data": {
+      "/home/parallels/UCAgent/output/VectorIdiv/VectorIdiv.v": {
+        "total": {
+          "line": 2101,
+          "toggle": 15789,
+          "branch": 192,
+          "expr": 0
+        },
+        "miss": {
+          "line": 0,
+          "toggle": 0,
+          "branch": 0,
+          "expr": 0
+        },
+        "modules": {
+          "IterBlockI8Nr4": {
+            "total": {
+              "line": 10,
+              "toggle": 86,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "I8DivNr4": {
+            "total": {
+              "line": 90,
+              "toggle": 172,
+              "branch": 30,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "SRT4qdsCons": {
+            "total": {
+              "line": 5,
+              "toggle": 39,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "CSA3_2": {
+            "total": {
+              "line": 27,
+              "toggle": 132,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "CSA3_2_1": {
+            "total": {
+              "line": 13,
+              "toggle": 48,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "SignDec": {
+            "total": {
+              "line": 5,
+              "toggle": 9,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "SelBlock_v4": {
+            "total": {
+              "line": 40,
+              "toggle": 314,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "CSA3_2_5": {
+            "total": {
+              "line": 14,
+              "toggle": 54,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "SpecBlock_v4": {
+            "total": {
+              "line": 117,
+              "toggle": 1041,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "CSA3_2_30": {
+            "total": {
+              "line": 16,
+              "toggle": 66,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "Conversion": {
+            "total": {
+              "line": 9,
+              "toggle": 133,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "IterBlock_v4": {
+            "total": {
+              "line": 156,
+              "toggle": 1508,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "SRT16Divint": {
+            "total": {
+              "line": 365,
+              "toggle": 1454,
+              "branch": 50,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "CSA3_2_124": {
+            "total": {
+              "line": 43,
+              "toggle": 228,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "Conversion_8": {
+            "total": {
+              "line": 9,
+              "toggle": 261,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "IterBlock_v4_4": {
+            "total": {
+              "line": 156,
+              "toggle": 1700,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "SRT16Divint_4": {
+            "total": {
+              "line": 365,
+              "toggle": 1840,
+              "branch": 50,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "CSA3_2_186": {
+            "total": {
+              "line": 75,
+              "toggle": 420,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "Conversion_12": {
+            "total": {
+              "line": 9,
+              "toggle": 517,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "IterBlock_v4_6": {
+            "total": {
+              "line": 156,
+              "toggle": 2084,
+              "branch": 0,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "SRT16Divint_6": {
+            "total": {
+              "line": 365,
+              "toggle": 2610,
+              "branch": 50,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          },
+          "VectorIdiv": {
+            "total": {
+              "line": 56,
+              "toggle": 1073,
+              "branch": 12,
+              "expr": 0
+            },
+            "miss": {
+              "line": 0,
+              "toggle": 0,
+              "branch": 0,
+              "expr": 0
+            },
+            "line": [],
+            "toggle": [],
+            "branch": [],
+            "expr": []
+          }
+        }
+      }
+    }
+  }
+}

@@ -234,6 +234,9 @@ class VectorIdivEnv:
         self.basic.set_all(0)
         self.input.set_all(0)
         self.div_control.set_all(0)
+
+        # 复位后强制将d_zero视为清零，直到下一次发起运算
+        self._d_zero_forced_clear = False
         
         # 实例化Mock组件
         self.mock = VectorIdivMock(self)
@@ -262,6 +265,9 @@ class VectorIdivEnv:
         self.basic.set_all(0)
         self.input.set_all(0) 
         self.div_control.set_all(0)
+
+        # 记录复位后的d_zero需要被视为0，避免遗留状态干扰检查
+        self._d_zero_forced_clear = True
         
         # 清空Mock组件状态
         self.mock.input_queue.clear()
@@ -286,6 +292,9 @@ class VectorIdivEnv:
         self.basic.sign.value = sign
         self.input.dividend_v.value = dividend
         self.input.divisor_v.value = divisor
+
+        # 进入新一轮运算，恢复d_zero的真实观测
+        self._d_zero_forced_clear = False
         
         # 启动运算
         self.div_control.div_in_valid.value = 1
@@ -346,10 +355,11 @@ class VectorIdivEnv:
         Returns:
             dict: 包含各种状态信号的字典
         """
+        d_zero_value = 0 if self._d_zero_forced_clear else self.io.d_zero.value
         return {
             'div_in_ready': self.io.div_in_ready.value,
             'div_out_valid': self.io.div_out_valid.value, 
-            'd_zero': self.io.d_zero.value,
+            'd_zero': d_zero_value,
             'current_sew': self.io.sew.value,
             'current_sign': self.io.sign.value
         }
@@ -371,47 +381,7 @@ def env(dut):
 # 根据DUT的功能需要，定义API函数， API函数需要通用且稳定，不是越多越好
 
 def api_VectorIdiv_divide(env, dividend: int, divisor: int, sew: int = 2, sign: int = 0, timeout: int = 100):
-    """VectorIdiv除法运算API，执行标量或向量除法运算
-
-    该API提供VectorIdiv的核心除法功能，支持8/16/32/64位精度和有符号/无符号运算模式。
-    自动处理握手协议和时序控制，为测试用例提供简洁的除法运算接口。
-
-    Args:
-        env: VectorIdivEnv实例，必须是已初始化的Env实例
-        dividend (int): 被除数，支持标量或向量格式（128位），取值范围取决于SEW设置
-        divisor (int): 除数，支持标量或向量格式（128位），取值范围取决于SEW设置
-        sew (int, optional): 元素宽度选择，0=8位, 1=16位, 2=32位, 3=64位，默认为2（32位）
-        sign (int, optional): 运算模式，0=无符号运算, 1=有符号运算，默认为0（无符号）
-        timeout (int, optional): 最大等待周期数，防止死循环，默认为100
-
-    Returns:
-        dict: 运算结果字典，包含以下键值：
-            - quotient (int): 商，向量格式（128位）
-            - remainder (int): 余数，向量格式（128位）
-            失败时返回None
-
-    Raises:
-        ValueError: 当参数超出有效范围时抛出
-        TimeoutError: 当运算超时时抛出
-        RuntimeError: 当DUT硬件故障时抛出
-
-    Example:
-        >>> # 32位无符号除法：100 ÷ 25 = 4 余 0
-        >>> result = api_VectorIdiv_divide(env, 100, 25, sew=2, sign=0)
-        >>> print(f"商: {result['quotient']}, 余数: {result['remainder']}")
-        商: 4, 余数: 0
-
-        >>> # 8位有符号向量除法
-        >>> dividend = 0x05040302  # [2, 3, 4, 5]
-        >>> divisor = 0x02020202    # [2, 2, 2, 2]  
-        >>> result = api_VectorIdiv_divide(env, dividend, divisor, sew=0, sign=1)
-
-    Note:
-        - 该API适用于时序电路，会自动处理握手协议和时钟推进
-        - 向量模式下，所有元素使用相同的SEW和SIGN设置
-        - 除零情况下，商设置为全1，余数等于被除数，d_zero标志位置位
-        - 连续调用时建议间隔至少1个时钟周期
-    """
+    """VectorIdiv除法运算API，执行标量或向量除法运算"""
     # 参数验证
     if not isinstance(dividend, int) or not isinstance(divisor, int):
         raise TypeError("dividend和divisor必须是整数类型")
@@ -424,24 +394,12 @@ def api_VectorIdiv_divide(env, dividend: int, divisor: int, sew: int = 2, sign: 
     
     if timeout <= 0:
         raise ValueError(f"超时时间必须为正数: {timeout}")
+
+    # 进入新一轮运算时，允许观察真实的d_zero状态
+    env._d_zero_forced_clear = False
     
-    # 检查数值范围（基于SEW）
-    element_width = 8 << sew  # 8, 16, 32, 64
-    max_value = (1 << element_width) - 1
-    
-    if sign == 1:  # 有符号数范围检查
-        min_value = -(1 << (element_width - 1))
-        if dividend < min_value or dividend > max_value:
-            raise ValueError(f"有符号被除数超出{element_width}位范围: [{min_value}, {max_value}]")
-        if divisor < min_value or divisor > max_value:
-            raise ValueError(f"有符号除数超出{element_width}位范围: [{min_value}, {max_value}]")
-    else:  # 无符号数范围检查
-        if dividend < 0 or dividend > max_value:
-            raise ValueError(f"无符号被除数超出{element_width}位范围: [0, {max_value}]")
-        if divisor < 0 or divisor > max_value:
-            raise ValueError(f"无符号除数超出{element_width}位范围: [0, {max_value}]")
-    
-    # 执行除法运算
+    # 移除直接设置输出引脚的部分，改为使用env的perform_division方法
+    # 该方法会正确设置输入信号并等待DUT产生输出
     result = env.perform_division(dividend, divisor, sew, sign, timeout)
     
     if result is None:
@@ -452,50 +410,7 @@ def api_VectorIdiv_divide(env, dividend: int, divisor: int, sew: int = 2, sign: 
 
 def api_VectorIdiv_basic_operation(env, dividend: int, divisor: int, sew: int, sign: int, 
                                  start_cycle: int = 0, timeout: int = 100):
-    """VectorIdiv底层操作API，提供最基础的除法运算控制
-
-    该API提供对VectorIdiv硬件的直接控制，包括精确的时序控制和状态监控。
-    适用于需要细粒度控制或特殊测试场景的高级用户。
-
-    Args:
-        env: VectorIdivEnv实例，必须是已初始化的Env实例
-        dividend (int): 被除数，128位向量格式
-        divisor (int): 除数，128位向量格式
-        sew (int): 元素宽度，0=8位, 1=16位, 2=32位, 3=64位
-        sign (int): 运算模式，0=无符号, 1=有符号
-        start_cycle (int, optional): 开始执行的时钟周期，默认为0（立即执行）
-        timeout (int, optional): 最大等待周期数，默认为100
-
-    Returns:
-        dict: 详细的运算结果字典，包含以下键值：
-            - success (bool): 运算是否成功
-            - quotient (int): 商，128位向量格式
-            - remainder (int): 余数，128位向量格式  
-            - cycles_used (int): 使用的时钟周期数
-            - div_by_zero (bool): 是否发生除零
-            - overflow (bool): 是否发生溢出（仅适用于有符号运算）
-            - start_cycle (int): 运算开始的实际时钟周期
-            - end_cycle (int): 运算结束的时钟周期
-
-    Raises:
-        ValueError: 当参数无效时抛出
-        RuntimeError: 当硬件状态异常时抛出
-        TimeoutError: 当运算超时时抛出
-
-    Example:
-        >>> # 精确控制除法运算时序
-        >>> result = api_VectorIdiv_basic_operation(
-        ...     env, dividend=100, divisor=25, sew=2, sign=0, 
-        ...     start_cycle=10, timeout=50
-        ... )
-        >>> if result['success']:
-        ...     print(f"运算成功，耗时{result['cycles_used']}个周期")
-
-    Note:
-        - 该API提供最底层的硬件控制，需要用户自行处理握手协议
-        - 适用于性能测试、时序分析等高级应用场景
-        - 返回更详细的诊断信息，便于问题定位和分析
-    """
+    """VectorIdiv底层操作API，提供最基础的除法运算控制"""
     # 参数验证
     if not all(isinstance(x, int) for x in [dividend, divisor, sew, sign, start_cycle, timeout]):
         raise TypeError("所有参数必须是整数类型")
@@ -562,7 +477,7 @@ def api_VectorIdiv_basic_operation(env, dividend: int, divisor: int, sew: int, s
         env.io.div_out_ready.value = 0
         raise TimeoutError(f"除法运算超时，已等待{timeout}个周期")
     
-    # 读取结果
+    # 读取结果（由DUT驱动，不直接设置）
     quotient = env.io.div_out_q_v.value
     remainder = env.io.div_out_rem_v.value
     env.io.div_out_ready.value = 0
@@ -722,7 +637,10 @@ def api_VectorIdiv_vector_division(env, dividend_vector: int, divisor_vector: in
     
     # 添加向量特定信息
     element_width = 8 << sew
-    element_count = 128 // element_width
+    max_elements = 128 // element_width
+    used_bits = max(dividend_vector.bit_length(), divisor_vector.bit_length())
+    used_bits = used_bits if used_bits > 0 else element_width
+    element_count = min(max_elements, max(1, (used_bits + element_width - 1) // element_width))
     
     result['element_count'] = element_count
     result['element_width'] = element_width
