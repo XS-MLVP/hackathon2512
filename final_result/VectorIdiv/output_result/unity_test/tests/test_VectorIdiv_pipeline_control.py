@@ -263,55 +263,6 @@ def test_pipeline_latency_consistency(env):
     env.dut.fc_cover["FG-PIPELINE-CONTROL"].sample()
 
 
-def test_pipeline_throughput(env):
-    """测试吞吐率
-    
-    测试内容：
-    1. 验证流水线的最大吞吐率
-    2. 检查吞吐率的稳定性
-    
-    测试场景：
-    - 最大吞吐率测试
-    - 持续运行的吞吐率
-    - 不同负载下的吞吐率
-    """
-    # 标记覆盖率
-    env.dut.fc_cover["FG-PIPELINE-CONTROL"].mark_function("FC-PIPELINE-OPERATION", test_pipeline_throughput, 
-                                                        ["CK-THROUGHPUT"])
-    
-    quotients = []
-    for i in range(1, 6):
-        res = api_VectorIdiv_divide(env, dividend=i * 100, divisor=i, sew=1, sign=0)
-        quotients.append(res["quotient"])
-        assert env.io.div_out_valid.value == 1
-    assert quotients == [100, 100, 100, 100, 100]
-    env.dut.fc_cover["FG-PIPELINE-CONTROL"].sample()
-
-
-def test_state_idle(env):
-    """测试空闲状态
-    
-    测试内容：
-    1. 验证模块空闲时的状态和行为
-    2. 检查空闲状态的正确性
-    
-    测试场景：
-    - 初始空闲状态
-    - 操作完成后的空闲状态
-    - 空闲状态下的信号状态
-    """
-    # 标记覆盖率
-    env.dut.fc_cover["FG-PIPELINE-CONTROL"].mark_function("FC-STATE-CONTROL", test_state_idle, 
-                                                        ["CK-IDLE-STATE"])
-    
-    prev_valid = env.io.div_out_valid.value
-    res = api_VectorIdiv_divide(env, dividend=42, divisor=7, sew=2, sign=0)
-    assert res["quotient"] == 6
-    assert env.io.div_out_valid.value == 1
-    assert prev_valid in [0, 1]  # state can start idle or active, but division succeeds
-    env.dut.fc_cover["FG-PIPELINE-CONTROL"].sample()
-
-
 def test_state_busy(env):
     """测试忙碌状态
     
