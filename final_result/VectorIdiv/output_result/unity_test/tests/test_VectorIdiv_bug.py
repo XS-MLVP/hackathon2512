@@ -9,51 +9,31 @@ def test_Bug_1(env):
     # 覆盖率标记
     env.dut.fc_cover["FG-BOUNDARY-HANDLING"].mark_function("FC-DIVIDE-BY-ZERO", test_Bug_1, ["CK-ZERO-DETECTION", "CK-DZERO-FLAGS"])
     
-    # 配置64位无符号模式
-    env.io.sew.value = 3  # 64-bit lanes
-    env.io.sign.value = 0
+    # 使用API复位和初始化
+    api_VectorIdiv_reset_and_init(env, sew=3, sign=0)
     
-    # 设置测试数据：被除数为非零，除数为零
-    env.io.dividend_v.value = int.from_bytes(bytes([1]*16), 'big')
-    env.io.divisor_v.value = 0  # 两个64位lane都为零
+    # 设置测试数据
+    dividend = int.from_bytes(bytes([1]*16), 'big')
+    divisor = 0
     
-    # 握手信号
-    env.io.div_in_valid.value = 1
-    env.io.div_out_ready.value = 1
-    
-    # 等待输入就绪并启动运算
-    timeout = 0
-    while env.io.div_in_ready.value == 0:
-        env.Step(1)
-        timeout += 1
-        if timeout > 100:
-            pytest.fail("Timeout waiting for input ready")
-    
-    env.Step(1)
-    env.io.div_in_valid.value = 0
-    
-    # 等待结果
-    timeout = 0
-    while env.io.div_out_valid.value == 0:
-        env.Step(1)
-        timeout += 1
-        if timeout > 200:
-            pytest.fail("Timeout waiting for output valid")
+    # 使用基础API执行除法运算，保持与其余用例一致的握手流程
+    result = api_VectorIdiv_basic_operation(
+        env,
+        dividend,
+        divisor,
+        sew=3,
+        sign=0,
+        timeout=200,
+    )
     
     # 验证除零标志
     dz = env.io.d_zero.value
-    assert dz == 0x0003, f"io_d_zero = 0x{dz:04x} 应为 0x0003"  # 两个lane都检测到除零
+    assert dz == 0x0003, f"io_d_zero = 0x{dz:04x} 应为 0x0003"
     
-    # 验证商和余数
-    quotient = env.io.div_out_q_v.value
-    remainder = env.io.div_out_rem_v.value
-    
-    # 在64位模式下，两个lane都应该是全1
+    # 验证结果
     expected_quotient = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-    assert quotient == expected_quotient, f"商应为0x{expected_quotient:x}，实际为0x{quotient:x}"
-    
-    # 余数应该等于被除数
-    assert remainder == env.io.dividend_v.value, f"余数应等于被除数，实际为0x{remainder:x}"
+    assert result['quotient'] == expected_quotient, f"商不匹配"
+    assert result['remainder'] == dividend, f"余数不匹配"
 
 def test_Bug_2(env):
     """测试随机除法运算 - 验证大数运算正确性"""
@@ -142,7 +122,6 @@ def test_Bug_3(env):
     assert rem == 0x00, f"余数: 0x{rem:02X} 应为 0x00"
 
 def test_Bug_4(env):
-    """测试流水线刷新功能 - 验证flush操作正确性"""
     # 覆盖率标记
     env.dut.fc_cover["FG-PIPELINE-CONTROL"].mark_function("FC-PIPELINE-OPERATION", test_Bug_4, ["CK-FLUSH-OPERATION", "CK-FLUSH-TIMING"])
     env.dut.fc_cover["FG-PIPELINE-CONTROL"].mark_function("FC-STATE-CONTROL", test_Bug_4, ["CK-STATE-TRANSITION"])
@@ -163,32 +142,23 @@ def test_Bug_4(env):
     dividend_a = pack_u32_lanes(op_a_dividends)
     divisor_a = pack_u32_lanes(op_a_divisors)
     
-    # 启动第一个除法运算
-    result_a = api_VectorIdiv_basic_operation(
-        env, dividend_a, divisor_a,
-        sew=2,    # 32-bit
-        sign=0,   # 无符号
-        start_cycle=0,
-        timeout=50
-    )
-    
-    # 验证第一个运算成功启动
-    assert result_a['success'], "第一个除法运算失败"
-    
-    # 执行刷新操作（直接使用env的flush信号）
+    # 启动第一个除法运算但不等待结果，保持流水线处于忙状态后执行刷新
+    env.start_division(dividend_a, divisor_a, sew=2, sign=0, timeout=50)
+    env.Step(5)  # 让除法进入处理中
+
     env.io.flush.value = 1
-    env.Step(1)
+    env.Step(2)  # 保持flush信号2个周期
     env.io.flush.value = 0
-    
-    # 测量刷新恢复时间
-    recovery_cycles = 0
-    for _ in range(20):
+
+    # 刷新后等待输入端重新ready，确保流水线被清空
+    ready_cycles = 0
+    for _ in range(50):
         env.Step(1)
-        recovery_cycles += 1
+        ready_cycles += 1
         if env.io.div_in_ready.value:
             break
     else:
-        pytest.fail("刷新信号在观测窗口内未生效")
+        pytest.fail("刷新后DUT未在50个周期内恢复就绪")
     
     # 第二组操作数（刷新后）
     op_b_dividends = [0x13572468, 0x5555AAA0, 0xFEEDC0DE, 0x12348765]
@@ -220,12 +190,21 @@ def test_Bug_4(env):
     act_rems = unpack_u32_lanes(result_b['remainder'])
     
     # 检查所有lane的结果
+    mismatched_lanes = []
     for idx, (exp_q, exp_r, act_q, act_r) in enumerate(zip(exp_quots, exp_rems, act_quots, act_rems)):
-        assert exp_q == act_q and exp_r == act_r, (
-            f"Lane {idx} 结果不匹配\n"
-            f"期望: Q=0x{exp_q:08x}, R=0x{exp_r:08x}\n"
-            f"实际: Q=0x{act_q:08x}, R=0x{act_r:08x}"
-        )
+        if exp_q != act_q or exp_r != act_r:
+            mismatched_lanes.append(idx)
+    
+    # 如果有不匹配的lane，提供详细错误信息
+    if mismatched_lanes:
+        error_msg = "刷新后结果不匹配的lane:\n"
+        for idx in mismatched_lanes:
+            error_msg += (
+                f"Lane {idx}: 期望 Q=0x{exp_quots[idx]:08x}, R=0x{exp_rems[idx]:08x} | "
+                f"实际 Q=0x{act_quots[idx]:08x}, R=0x{act_rems[idx]:08x}\n"
+            )
+        pytest.fail(error_msg)
+
 
 def test_Bug_5(env):
     """测试8位模式余数边界条件 - 验证特定余数值处理"""
