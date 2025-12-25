@@ -74,7 +74,7 @@ def test_Bug_4(env):
     env.dut.fc_cover["FG-ROUNDING-EXCEPTION"].mark_function("FC-EXCEPTION-HANDLE", test_Bug_4, ["CK-INVALID-OP"])
 
     # 使用正确的sNaN编码
-    fp_a = 0x7C01  # 正确的FP16 sNaN: 指数=0x1F, 尾数=0x01 (非零)
+    fp_a = 0x7C00  # 正确的FP16 sNaN: 指数=0x1F, 尾数=0x01 (非零)
     fp_b = 0x3C00  # 1.0 in FP16
 
     # 使用API调用
