@@ -74,8 +74,8 @@ def test_Bug_4(env):
     env.dut.fc_cover["FG-ROUNDING-EXCEPTION"].mark_function("FC-EXCEPTION-HANDLE", test_Bug_4, ["CK-INVALID-OP"])
 
     # 使用正确的sNaN编码
-    fp_a = 0x7C00  # 正确的FP16 sNaN: 指数=0x1F, 尾数=0x01 (非零)
-    fp_b = 0x3C00  # 1.0 in FP16
+    fp_a = 0x7C017C017C017C01  # 正确的FP16 sNaN: 指数=0x1F, 尾数=0x01 (非零)
+    fp_b = 0x3C003C003C003C00  # 1.0 in FP16
 
     # 使用API调用
     result, fflags = api_VectorFloatAdder_f16_operation(
@@ -87,8 +87,8 @@ def test_Bug_4(env):
     )
     
     # 验证标志位：应该设置无效操作标志(NV)
-    expected_nv_flag = 0x10
-    assert (fflags & expected_nv_flag) == expected_nv_flag, f"fflags=0x{fflags:x} 应设置NV标志(0x10)"
+    expected_nv_flag = 0b10000100001000010000
+    assert (fflags & expected_nv_flag) == expected_nv_flag, f"fflags=0b{fflags:20b} 应设置NV标志(0b10000100001000010000)"
 
 def test_Bug_5(env):
     env.dut.fc_cover["FG-VECTOR-MASK"].mark_function("FC-REDUCTION", test_Bug_5, ["CK-REDUCTION-MASK"])
