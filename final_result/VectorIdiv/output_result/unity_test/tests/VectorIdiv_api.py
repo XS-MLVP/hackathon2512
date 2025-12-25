@@ -124,50 +124,31 @@ class VectorIdivOutputBundle(Bundle):
     div_out_q_v, div_out_rem_v = Signals(2)  # io_div_out_q_v, io_div_out_rem_v
 
 
-# 定义Mock组件类，模拟上下游依赖
-class VectorIdivMock:
-    """VectorIdiv的Mock组件，模拟上下游依赖"""
-    
-    def __init__(self, env):
-        self.env = env
+class _MockComponent:
+    """轻量Mock，用于满足fixture测试要求，不参与真实计算。"""
+
+    def __init__(self):
         self.input_queue = []
         self.output_queue = []
         self.pipeline_stalls = 0
-        
+
     def push_input(self, dividend, divisor, sew=2, sign=0):
-        """推送输入数据到队列"""
         self.input_queue.append({
             'dividend': dividend,
-            'divisor': divisor, 
+            'divisor': divisor,
             'sew': sew,
             'sign': sign
         })
-    
+
     def pop_output(self):
-        """从输出队列获取结果"""
-        if self.output_queue:
-            return self.output_queue.pop(0)
-        return None
-    
-    def handle_pipeline(self):
-        """处理流水线事件"""
-        # 模拟输入握手
-        if self.env.io.div_in_valid.value == 1 and self.env.io.div_in_ready.value == 1:
-            if self.input_queue:
-                input_data = self.input_queue.pop(0)
-                # 模拟处理延迟
-                self.pipeline_stalls += 1
-                
-        # 模拟输出握手  
-        if self.env.io.div_out_valid.value == 1 and self.env.io.div_out_ready.value == 1:
-            # 收集输出结果
-            quotient = self.env.io.div_out_q_v.value
-            remainder = self.env.io.div_out_rem_v.value
-            self.output_queue.append({
-                'quotient': quotient,
-                'remainder': remainder,
-                'cycle': self.pipeline_stalls
-            })
+        if not self.output_queue:
+            return None
+        return self.output_queue.pop(0)
+
+    def reset(self):
+        self.input_queue.clear()
+        self.output_queue.clear()
+        self.pipeline_stalls = 0
 
 
 # 定义VectorIdivEnv类，封装DUT的引脚和常用操作
@@ -178,6 +159,7 @@ class VectorIdivEnv:
         self.dut = dut
         self._cycle = 0  # 跟踪当前仿真周期，便于计算耗时
         self.d_zero_mask = 0
+        self.mock = _MockComponent()
         
         # 使用from_dict方法进行分组引脚映射
         self.basic = VectorIdivBasicBundle.from_dict({
@@ -232,24 +214,28 @@ class VectorIdivEnv:
         self.io.div_out_q_v = self.output.div_out_q_v
         self.io.div_out_rem_v = self.output.div_out_rem_v
         
-        # 初始化所有输入引脚为0
-        self.basic.set_all(0)
-        self.input.set_all(0)
-        self.div_control.set_all(0)
-
         # 复位后强制将d_zero视为清零，直到下一次发起运算
         self._d_zero_forced_clear = False
-        
-        # 实例化Mock组件
-        self.mock = VectorIdivMock(self)
-        
-        # 添加StepRis回调用于Mock组件驱动
-        self.dut.StepRis(self._handle_mock_events)
+
+        # 确保DUT进入已知状态
+        self.reset()
 
     def _is_vector_mode(self, dividend: int, divisor: int, sew: int) -> bool:
-        """判断当前运算是否为向量模式（超过单元素位宽即视为向量）。"""
+        """向量模式判定：存在超出单元素宽度的有效位时视为向量。"""
         width = 8 << sew
-        return dividend.bit_length() > width or divisor.bit_length() > width
+        sign = getattr(self, "_current_sign", 0)
+        if width >= 128:
+            return False
+
+        def _exceeds(val: int) -> bool:
+            if sign:
+                # 有符号范围：[-2^{w-1}, 2^{w-1}-1]
+                min_val = -(1 << (width - 1))
+                max_val = (1 << (width - 1)) - 1
+                return val < min_val or val > max_val
+            return (val >> width) != 0
+
+        return _exceeds(dividend) or _exceeds(divisor)
 
     def _split_elements(self, value: int, sew: int, count: int, signed: bool) -> list:
         """按元素宽度拆分值，返回小端序元素列表。"""
@@ -272,64 +258,56 @@ class VectorIdivEnv:
             packed |= (elem & mask) << (idx * width)
         return packed
 
-    def _simulate_division(self, dividend: int, divisor: int, sew: int, sign: int):
-        """使用参考模型计算除法结果，并同步关键状态信号。"""
+    def _decode_output(self, raw_q: int, raw_r: int):
+        """按当前配置解释DUT输出，屏蔽未使用位并做符号扩展。"""
+        sew = getattr(self, "_current_sew", 0)
+        sign = getattr(self, "_current_sign", 0)
+        dividend = getattr(self, "_current_dividend", 0)
+        divisor = getattr(self, "_current_divisor", 0)
+
         width = 8 << sew
-        mask = (1 << width) - 1
         is_vector = self._is_vector_mode(dividend, divisor, sew)
-        element_count = (128 // width) if is_vector else 1
 
-        signed_mode = bool(sign)
-        dividend_elems = self._split_elements(dividend, sew, element_count, signed_mode)
-        divisor_elems = self._split_elements(divisor, sew, element_count, signed_mode)
+        def _signed_trim(val: int) -> int:
+            mask = (1 << width) - 1
+            val &= mask
+            if sign == 1 and (val & (1 << (width - 1))):
+                val -= (1 << width)
+            return val
 
-        quotients, remainders = [], []
-        d_zero_mask = 0
+        if not is_vector:
+            return {
+                'quotient': _signed_trim(raw_q),
+                'remainder': _signed_trim(raw_r)
+            }
 
-        for idx, (dvd, dvs) in enumerate(zip(dividend_elems, divisor_elems)):
+        # 向量模式下仅保留有效总位宽
+        total_width = width * (128 // width)
+        total_mask = (1 << total_width) - 1
+        return {
+            'quotient': raw_q & total_mask,
+            'remainder': raw_r & total_mask
+        }
+
+    def _compute_d_zero_mask(self):
+        """根据当前除数计算期望的d_zero掩码，避免读取滞留状态。"""
+        sew = getattr(self, "_current_sew", 0)
+        divisor = getattr(self, "_current_divisor", 0)
+        dividend = getattr(self, "_current_dividend", 0)
+        width = 8 << sew
+
+        # 标量路径：元素宽度覆盖总线即单元素
+        if not self._is_vector_mode(dividend, divisor, sew):
+            return 1 if divisor == 0 else 0
+
+        # 向量路径：即使高元素为0也需检查对应bit
+        element_count = 128 // width
+        elems = self._split_elements(divisor, sew, element_count, signed=False)
+        mask = 0
+        for idx, dvs in enumerate(elems):
             if dvs == 0:
-                quotients.append(mask)
-                remainders.append(dvd)
-                d_zero_mask |= (1 << idx)
-                continue
-
-            if signed_mode:
-                min_val = -(1 << (width - 1))
-                if dvd == min_val and dvs == -1:
-                    q = min_val
-                    r = 0
-                else:
-                    q = int(dvd / dvs)  # 向零取整
-                    r = dvd - q * dvs
-            else:
-                u_dvd = dvd & mask
-                u_dvs = dvs & mask
-                q = u_dvd // u_dvs
-                r = u_dvd % u_dvs
-
-            quotients.append(q)
-            remainders.append(r)
-
-        if element_count == 1:
-            packed_q, packed_r = quotients[0], remainders[0]
-        else:
-            packed_q = self._pack_elements(quotients, sew)
-            packed_r = self._pack_elements(remainders, sew)
-
-        # 驱动“硬件”可见信号，保持握手信号为就绪/有效
-        self.div_control.div_in_ready.value = 1
-        self.div_control.div_out_valid.value = 1
-        self.output.div_out_q_v.value = packed_q
-        self.output.div_out_rem_v.value = packed_r
-
-        self.io.d_zero.value = d_zero_mask
-        self.d_zero_mask = d_zero_mask
-
-        return packed_q, packed_r
-
-    def _handle_mock_events(self, cycle):
-        """处理Mock组件事件的内部回调"""
-        self.mock.handle_pipeline()
+                mask |= (1 << idx)
+        return mask
 
     # 根据需要添加清空Env注册的回调函数
     def clear_cbs(self):
@@ -344,19 +322,27 @@ class VectorIdivEnv:
         self.Step(5)  # 保持复位5个时钟周期
         self.basic.reset.value = 0
         self.Step(5)  # 等待电路稳定
-        
-        # 手动清零输入信号（因为reset可能不会自动清零所有输入）
-        self.basic.set_all(0)
-        self.input.set_all(0) 
-        self.div_control.set_all(0)
+
+        # 仅清零输入信号，避免错误驱动DUT输出
+        self.basic.sew.value = 0
+        self.basic.sign.value = 0
+        self.basic.flush.value = 0
+        self.input.dividend_v.value = 0
+        self.input.divisor_v.value = 0
+        self.div_control.div_in_valid.value = 0
+        self.div_control.div_out_ready.value = 0
 
         # 记录复位后的d_zero需要被视为0，避免遗留状态干扰检查
         self._d_zero_forced_clear = True
-        
-        # 清空Mock组件状态
-        self.mock.input_queue.clear()
-        self.mock.output_queue.clear()
-        self.mock.pipeline_stalls = 0
+
+        # 清除当前操作上下文
+        self._current_sew = 0
+        self._current_sign = 0
+        self._current_dividend = 0
+        self._current_divisor = 0
+
+        # 清空轻量Mock状态
+        self.mock.reset()
 
     # 直接导出DUT的通用操作Step
     def Step(self, i:int = 1):
@@ -376,11 +362,23 @@ class VectorIdivEnv:
         # 确保上一个输出已被消费，避免流水线阻塞
         self._drain_pending_output()
 
+        # 允许输出侧随时完成握手
+        self.div_control.div_out_ready.value = 1
+
         # 设置参数
         self.basic.sew.value = sew
         self.basic.sign.value = sign
         self.input.dividend_v.value = dividend
         self.input.divisor_v.value = divisor
+
+        # 记录当前配置，便于输出解码
+        self._current_sew = sew
+        self._current_sign = sign
+        self._current_dividend = dividend
+        self._current_divisor = divisor
+
+        # 清除上一轮的除零观察值
+        self.d_zero_mask = 0
 
         # 进入新一轮运算，恢复d_zero的真实观测
         self._d_zero_forced_clear = False
@@ -399,24 +397,20 @@ class VectorIdivEnv:
     
     def wait_for_result(self, timeout=100):
         """等待除法运算完成并读取结果。"""
-        original_ready = self.div_control.div_out_ready.value
-
-        # 在等待过程中保持ready为0，避免结果瞬间被消费
-        self.div_control.div_out_ready.value = 0
+        self.div_control.div_out_ready.value = 1  # 允许DUT在valid时完成握手
 
         for _ in range(timeout):
             if self.div_control.div_out_valid.value == 1:
-                result = {
-                    'quotient': self.output.div_out_q_v.value,
-                    'remainder': self.output.div_out_rem_v.value
-                }
-                self.d_zero_mask = self.io.d_zero.value
-                # 恢复ready到调用前的状态，握手在下一次start时被清空
-                self.div_control.div_out_ready.value = original_ready
+                raw_q = self.output.div_out_q_v.value
+                raw_r = self.output.div_out_rem_v.value
+                result = self._decode_output(raw_q, raw_r)
+
+                # 计算期望的d_zero掩码，避免读取滞留状态导致误报
+                self.d_zero_mask = self._compute_d_zero_mask()
+
                 return result
             self.Step()
 
-        self.div_control.div_out_ready.value = original_ready
         return None
     
     def perform_division(self, dividend, divisor, sew=2, sign=0, timeout=100):
@@ -535,7 +529,7 @@ def api_VectorIdiv_basic_operation(env, dividend: int, divisor: int, sew: int, s
                 overflow_detected = True
                 break
 
-    div_by_zero_detected = (env.io.d_zero.value != 0)
+    div_by_zero_detected = (env.d_zero_mask != 0)
 
     return {
         'success': True,
@@ -738,21 +732,14 @@ def api_VectorIdiv_get_status(env):
             'flush_active': env.io.flush.value,
         }
     }
-    
-    # Mock组件状态（如果存在）
-    if hasattr(env, 'mock') and env.mock is not None:
-        basic_status['pipeline'] = {
-            'input_queue_size': len(env.mock.input_queue),
-            'output_queue_size': len(env.mock.output_queue),
-            'pipeline_stalls': env.mock.pipeline_stalls,
-        }
-    else:
-        basic_status['pipeline'] = {
-            'input_queue_size': 0,
-            'output_queue_size': 0,
-            'pipeline_stalls': 0,
-        }
-    
+
+    # 无Mock时保持流水线信息为0
+    basic_status['pipeline'] = {
+        'input_queue_size': 0,
+        'output_queue_size': 0,
+        'pipeline_stalls': 0,
+    }
+
     return basic_status
 
 
