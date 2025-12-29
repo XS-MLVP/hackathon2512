@@ -1,1 +1,0 @@
-genhtml --branch-coverage /home/parallels/UCAgent/output/uc_test_report/line_dat/merged.info -o /home/parallels/UCAgent/output/uc_test_report/line_dat

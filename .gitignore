@@ -1,4 +1,9 @@
-
+.DS_Store
+data/
+uc_test_report/
+.pyc
+.fst
+.dat
 output
 result
 dutcache
